@@ -13,11 +13,11 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "permadeath-launcher",
+        "title": "Permadeath Launcher",
         "width": 1080,
         "height": 720,
         "resizable": false,
-        "fullscreen": false,
+        "fullscreen": true,
         "maximized": true,
         "maximizable": false
       }

@@ -12,7 +12,10 @@ import {
     Play,
     Users,
     Clock,
-    Gamepad2
+    Gamepad2,
+    Info,
+    MemoryStick,
+    Gauge
 } from 'lucide';
 
 createIcons({
@@ -29,6 +32,9 @@ createIcons({
       Play,
       Users,
       Clock,
-      Gamepad2
+      Gamepad2,
+      Gauge,
+      Info,
+      MemoryStick
   }
 });
