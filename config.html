@@ -1,20 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>PERMADEATH LAUNCHER | Config</title>
     <link rel="stylesheet" href="/src/css/sidebar.css" />
+    <link rel="stylesheet" href="/src/css/dashboard-config.css" />
     <script type="module" src="/src/TypeScript/main.ts" defer></script>
     <script type="module" src="/src/TypeScript/Icons.ts" defer></script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: #09090c center/cover no-repeat;
+        }
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+            width: 100vw;
+        }
+        /* Opcional: para responsive puedes adaptar con media queries aquí */
+    </style>
 </head>
 <body>
 <div class="main-layout">
     <aside class="sidebar">
         <div class="sidebar__header">
-      <span class="sidebar__logo">
-        <i data-lucide="Skull"></i>
-        <i data-lucide="Heart" class="sidebar__heart"></i>
-      </span>
+            <span class="sidebar__logo">
+                <i data-lucide="Skull"></i>
+                <i data-lucide="Heart" class="sidebar__heart"></i>
+            </span>
             <div>
                 <h1>PERMADEATH</h1>
                 <span class="subtitle">SMP Launcher</span>
@@ -39,11 +52,11 @@
                 Actualizaciones
             </a>
             <a href="#" class="sidebar__btn">
-                <i data-lucide="folder-open"></i>
+                <i data-lucide="FolderOpen"></i>
                 Recursos
             </a>
             <a href="#" class="sidebar__btn">
-                <i data-lucide="log-in"></i>
+                <i data-lucide="LogIn"></i>
                 Cuenta
             </a>
         </nav>
@@ -63,8 +76,104 @@
             </div>
         </section>
     </aside>
-    <div class="dashboard">
+    <div class="dashboard-config-wrapper">
+        <h1 class="config-title">
+            <i data-lucide="Settings"></i>
+            Configuración del Launcher
+        </h1>
+        <form class="config-grid">
+            <!-- General -->
+            <section class="config-section">
+                <div class="config-section__header">
+                    <i data-lucide="Settings"></i>
+                    General
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Inicio automático
+                        <div class="config-inputs">
+                            <span class="config-desc">Lanzar el juego automáticamente al abrir</span>
+                            <input type="checkbox" class="switch-input" />
+                            <span class="switch"></span>
+                        </div>
 
+                    </label>
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Mostrar advertencias de muerte
+                        <div class="config-inputs">
+                            <span class="config-desc">Recordatorios sobre permadeath</span>
+                            <input type="checkbox" class="switch-input" />
+                            <span class="switch"></span>
+                        </div>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Modo compacto
+                        <div class="config-inputs">
+                            <span class="config-desc">Interfaz más pequeña</span>
+                            <input type="checkbox" class="switch-input" />
+                            <span class="switch"></span>
+                        </div>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <label class="config-label" style="margin-bottom:0;">
+                        Idioma
+                        <div class="config-inputs">
+                            <select class="select-input">
+                                <option>Español</option>
+                                <option>Inglés</option>
+                            </select>
+                        </div>
+                    </label>
+                </div>
+            </section>
+            <!-- Juego -->
+            <section class="config-section">
+                <div class="config-section__header config-section__header--yellow">
+                    <i data-lucide="Car"></i>
+                    Juego
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Directorio de screenshots
+                        <div class="config-inputs">
+                            <div class="input-group">
+                                <input type="text" class="input-text" value="~/Pictures/PERMADEATHSMP" readonly />
+                                <button class="btn btn--light" type="button">Cambiar</button>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Mantener logs detallados
+                        <div class="config-inputs">
+                            <span class="config-desc">Para debugging</span>
+                            <input type="checkbox" class="switch-input" />
+                            <span class="switch"></span>
+                        </div>
+                    </label>
+                </div>
+                <div class="config-row">
+                    <label class="config-label">
+                        Copia de seguridad automática
+                        <div class="config-inputs">
+                            <span class="config-desc">Backup de configuración</span>
+                            <input type="checkbox" class="switch-input" />
+                            <span class="switch"></span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+            <div class="config-footer">
+                <button class="btn btn--light" type="reset">Restablecer</button>
+                <button class="btn btn--red" type="submit">Guardar Cambios</button>
+            </div>
+        </form>
     </div>
 </div>
 </body>
