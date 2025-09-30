@@ -17,8 +17,8 @@
         "width": 1080,
         "height": 720,
         "resizable": false,
-        "fullscreen": false,
-        "maximized": false
+        "fullscreen": true,
+        "maximized": true
       }
     ],
     "security": {
