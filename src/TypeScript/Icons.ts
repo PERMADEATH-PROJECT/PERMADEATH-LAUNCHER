@@ -1,4 +1,18 @@
-import { createIcons, Skull, Settings, Download, FolderOpen, LogIn, Swords, Heart, Zap } from 'lucide';
+import {
+    createIcons,
+    Skull,
+    Settings,
+    Download,
+    FolderOpen,
+    LogIn,
+    Swords,
+    Heart,
+    Zap,
+    TriangleAlert,
+    Play,
+    Users,
+    Clock
+} from 'lucide';
 
 createIcons({
   icons: {
@@ -9,6 +23,10 @@ createIcons({
       LogIn,
       Swords,
       Heart,
-      Zap
+      Zap,
+      TriangleAlert,
+      Play,
+      Users,
+      Clock
   }
 });
