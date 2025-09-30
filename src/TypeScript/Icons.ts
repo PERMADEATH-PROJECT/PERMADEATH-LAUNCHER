@@ -11,7 +11,8 @@ import {
     TriangleAlert,
     Play,
     Users,
-    Clock
+    Clock,
+    Gamepad2
 } from 'lucide';
 
 createIcons({
@@ -27,6 +28,7 @@ createIcons({
       TriangleAlert,
       Play,
       Users,
-      Clock
+      Clock,
+      Gamepad2
   }
 });
