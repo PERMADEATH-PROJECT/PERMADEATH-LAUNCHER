@@ -10,7 +10,7 @@
   <style>
     body {
       min-height: 100vh;
-      background: #09090c url('background.jpg') center/cover no-repeat;
+      background: #09090c center/cover no-repeat;
     }
     .main-layout {
       display: flex;
@@ -30,7 +30,6 @@
     }
     .dashboard-center-wrapper {
       width: 100%;
-      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -113,7 +112,6 @@
 <body>
 <div class="main-layout">
   <aside class="sidebar">
-    <!-- ...sidebar igual que antes... -->
     <div class="sidebar__header">
       <span class="sidebar__logo">
         <i data-lucide="Skull"></i>
@@ -126,7 +124,7 @@
     </div>
     <hr class="sidebar__divider" />
     <nav class="sidebar__nav">
-      <a href="/src/test.html" class="sidebar__btn sidebar__btn--primary">
+      <a href="#" class="sidebar__btn sidebar__btn--primary">
         <i data-lucide="Swords"></i>
         Jugar
       </a>
@@ -143,11 +141,11 @@
         Actualizaciones
       </a>
       <a href="#" class="sidebar__btn">
-        <i data-lucide="FolderOpen"></i>
+        <i data-lucide="folder-open"></i>
         Recursos
       </a>
       <a href="#" class="sidebar__btn">
-        <i data-lucide="LogIn"></i>
+        <i data-lucide="log-in"></i>
         Cuenta
       </a>
     </nav>
@@ -170,7 +168,7 @@
   <div class="dashboard">
     <div class="dashboard-center-wrapper">
       <div class="alert-warning">
-        <i data-lucide="AlertTriangle"></i>
+        <i data-lucide="triangle-alert"></i>
         <span>
           <strong>¡ADVERTENCIA!</strong>
           <br>
@@ -233,16 +231,16 @@
                 <span class="badge badge--green">Vivo</span>
               </div>
               <div class="panel__player">
-                <span>PLACEHOLDER</span>
-                <span class="badge badge--green">PLACEHOLDER</span>
+                <span>Nombre</span>
+                <span class="badge badge--green">Vivo</span>
               </div>
               <div class="panel__player">
-                <span class="panel__player-out">PLACEHOLDER</span>
-                <span class="badge badge--red">PLACEHOLDER</span>
+                <span class="panel__player-out">Nombre</span>
+                <span class="badge badge--red">Muerto</span>
               </div>
               <div class="panel__player">
-                <span class="panel__player-out">PLACEHOLDER</span>
-                <span class="badge badge--red">PLACEHOLDER</span>
+                <span class="panel__player-out">Nombre</span>
+                <span class="badge badge--red">Muerto</span>
               </div>
             </div>
           </section>
