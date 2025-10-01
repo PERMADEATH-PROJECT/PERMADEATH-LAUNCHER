@@ -295,14 +295,12 @@
 /* Responsive */
 @media (max-width: 1150px) {
     .dashboard-updates-wrapper {
-        max-width: 100vw;
         padding-left: 12px;
         padding-right: 12px;
     }
 }
 @media (max-width: 900px) {
     .dashboard-updates-wrapper {
-        max-width: 100vw;
         padding-left: 7px;
         padding-right: 7px;
     }

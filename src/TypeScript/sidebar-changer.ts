@@ -203,10 +203,10 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                 </div>
                 <div class="config-row">
                     <label class="config-label">
-                        Directorio de screenshots
+                        Directorio del juego
                         <div class="config-inputs">
                             <div class="input-group">
-                                <input type="text" class="input-text" value="~/Pictures/PERMADEATHSMP" readonly />
+                                <input type="text" class="input-text" value="%APPDATA%/.minecraft-Launcher-CLI" readonly />
                                 <button class="btn btn--light" type="button">Cambiar</button>
                             </div>
                         </div>

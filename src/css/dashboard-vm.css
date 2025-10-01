@@ -322,7 +322,6 @@
 
 @media (max-width: 1200px) {
     .dashboard-vm-wrapper, .vm-grid {
-        max-width: 100vw;
         padding-left: 12px;
         padding-right: 12px;
     }
