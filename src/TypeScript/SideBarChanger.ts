@@ -329,6 +329,103 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                 </div>
             </form>
         </div>`
+const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
+        <div class="updates-title-row">
+          <h1 class="updates-title">
+            <i data-lucide="Download"></i>
+            Actualizaciones
+          </h1>
+          <button class="updates-btn updates-btn--blue" type="button">
+            <i data-lucide="RefreshCw"></i>
+            Buscar Actualizaciones
+          </button>
+        </div>
+
+        <div class="updates-mod-card">
+          <div>
+            <span class="mod-title">PERMADEATHSMP Mod</span>
+            <span class="mod-version">Versión actual: v2.1.2</span>
+            <span class="mod-check">Última verificación: hace 2 horas</span>
+          </div>
+          <div class="updates-mod-status">
+            <span class="updates-status-icon"
+              ><i data-lucide="AlertCircle"></i
+            ></span>
+            <span class="updates-status-label">Actualización Disponible</span>
+          </div>
+        </div>
+
+        <div class="updates-update-card">
+          <div class="update-header-row">
+            <span class="update-header">
+              <i data-lucide="Download"></i>
+              Actualización Disponible
+            </span>
+            <span class="update-label-new">Nueva</span>
+          </div>
+          <div class="update-main-row">
+            <div>
+              <span class="update-version-n">v2.1.3</span>
+              <span class="update-version-highlight"> - Mejoras Críticas</span>
+              <span class="update-date">15 de Diciembre, 2024 · 45.2 MB</span>
+            </div>
+            <button class="updates-btn updates-btn--green" type="button">
+              <i data-lucide="Download"></i>
+              Descargar
+            </button>
+          </div>
+          <div class="update-desc">
+            Mejoras en el sistema de Esqueletos de Clase, corrección de bugs en
+            Ultra Ravagers
+          </div>
+          <div class="update-news">
+            <span class="update-news-title">Novedades:</span>
+            <ul>
+              <li>Balanceado Esqueletos de Clase V (Pesadilla)</li>
+              <li>Corregido bug crítico de Carlos el Esclavo</li>
+              <li>Optimización del sistema Tren de la Muerte</li>
+              <li>Mejoras de rendimiento en dimensión End transformada</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="updates-config-card">
+          <span class="updates-config-title"
+            >Configuración de Actualizaciones</span
+          >
+          <div class="updates-config-row">
+            <div>
+              <span class="updates-config-label"
+                >Actualizaciones automáticas</span
+              >
+              <span class="updates-config-desc"
+                >Descargar e instalar actualizaciones automáticamente</span
+              >
+            </div>
+            <button class="updates-btn updates-btn--white" type="button">
+              Habilitado
+            </button>
+          </div>
+          <div class="updates-config-row">
+            <div>
+              <span class="updates-config-label">Notificaciones</span>
+              <span class="updates-config-desc"
+                >Mostrar notificaciones de nuevas versiones</span
+              >
+            </div>
+            <button class="updates-btn updates-btn--white" type="button">
+              Habilitado
+            </button>
+          </div>
+          <div class="updates-config-warning">
+            <span class="updates-config-warning-title">¡Importante!</span>
+            <span class="updates-config-warning-desc">
+              Siempre actualiza antes de unirte al servidor. Las versiones
+              incompatibles harán que no puedas unirte.
+            </span>
+          </div>
+        </div>
+      </div>`
 
 document.getElementById("play")?.addEventListener("click", () => {
     const app = document.getElementById("app");
@@ -398,6 +495,32 @@ document.getElementById("vm")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", vmDashboard);
         toggleActiveButton("vm");
+        // Re-initialize icons
+        // @ts-ignore
+        if (window.lucide) {
+            // @ts-ignore
+            window.lucide.createIcons();
+        }
+        createIcons({ icons: icons });
+    }
+});
+
+document.getElementById("updates")?.addEventListener("click", () => {
+    const app = document.getElementById("app");
+    const dashboard = document.getElementById("dashboard");
+    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
+
+    if (dashboard) {
+        dashboard.remove();
+    }
+
+    if (dashboardCss) {
+        dashboardCss.href = "/src/css/dashboard-update.css";
+    }
+
+    if (app) {
+        app.insertAdjacentHTML("beforeend", updateDashboard);
+        toggleActiveButton("updates");
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
