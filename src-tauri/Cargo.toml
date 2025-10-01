@@ -17,7 +17,9 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 [[bin]]
 name = "permadeath-launcher"
 path = "src/main.rs"
-windows_subsystem = "windows"
+
+[package.metadata.windows]
+subsystem = "windows"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
