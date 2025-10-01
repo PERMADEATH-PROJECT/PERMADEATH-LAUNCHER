@@ -15,7 +15,10 @@ import {
     Gamepad2,
     Info,
     MemoryStick,
-    Gauge
+    Gauge,
+    User,
+    ShieldCheck,
+
 } from 'lucide';
 
 createIcons({
@@ -35,6 +38,8 @@ createIcons({
       Gamepad2,
       Gauge,
       Info,
-      MemoryStick
+      MemoryStick,
+      User,
+      ShieldCheck
   }
 });

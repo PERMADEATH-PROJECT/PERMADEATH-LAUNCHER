@@ -15,7 +15,9 @@ import {
     Gamepad2,
     Info,
     MemoryStick,
-    Gauge
+    Gauge,
+    User,
+    ShieldCheck,
 } from 'lucide';
 
 const icons = {
@@ -34,7 +36,9 @@ const icons = {
     Gamepad2,
     Gauge,
     Info,
-    MemoryStick
+    MemoryStick,
+    User,
+    ShieldCheck
 };
 
 // Change the dashboard and css when clicked on the sidebar
@@ -426,6 +430,107 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
           </div>
         </div>
       </div>`
+const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
+        <h1 class="account-title">
+          <i data-lucide="log-in"></i>
+          Gestión de Cuenta
+        </h1>
+        <div class="account-grid">
+          <!-- Formulario de Inicio de Sesión -->
+          <section class="account-section">
+            <div class="account-section__header">
+              <i data-lucide="User"></i>
+              Iniciar Sesión
+            </div>
+            <div class="account-warning account-warning--red">
+              <i data-lucide="triangle-alert"></i>
+              Solo se permite una cuenta por jugador en PERMADEATHSMP. La muerte
+              es permanente e irreversible.
+            </div>
+            <form class="account-form">
+              <label class="account-label">
+                Usuario de Minecraft
+                <input
+                  type="text"
+                  class="account-input"
+                  placeholder="TuNombreDeUsuario"
+                />
+              </label>
+              <label class="account-label">
+                Contraseña
+                <input
+                  type="password"
+                  class="account-input"
+                  placeholder="********"
+                />
+              </label>
+              <label class="account-label">
+                Código de Invitación
+                <input
+                  type="text"
+                  class="account-input"
+                  placeholder="PDSMP-XXXX-XXXX"
+                />
+                <span class="account-hint"
+                  >Código proporcionado por <b>Ponchisao326</b> para acceso al
+                  servidor</span
+                >
+              </label>
+              <button class="account-btn account-btn--blue" type="submit">
+                <i data-lucide="log-in"></i>
+                Iniciar Sesión
+              </button>
+              <a href="#" class="account-link">¿Olvidaste tu contraseña?</a>
+            </form>
+          </section>
+          <!-- Estado de la Cuenta -->
+          <section class="account-section">
+            <div class="account-section__header account-section__header--green">
+              <i data-lucide="shield-check"></i>
+              Estado de la Cuenta
+            </div>
+            <div class="account-status">
+              <div class="account-avatar">
+                <i data-lucide="User"></i>
+              </div>
+              <div class="account-status-info">
+                <span class="account-status-title">No conectado</span>
+                <span class="account-status-desc"
+                  >Inicia sesión para acceder al servidor</span
+                >
+              </div>
+              <span class="account-status-state">Desconectado</span>
+            </div>
+            <div class="account-status-list">
+              <div class="account-status-item">
+                <span>Estado del Jugador</span>
+                <span>--</span>
+              </div>
+              <div class="account-status-item">
+                <span>Días Sobrevividos</span>
+                <span>--</span>
+              </div>
+              <div class="account-status-item">
+                <span>Última Conexión</span>
+                <span>Nunca</span>
+              </div>
+              <div class="account-status-item">
+                <span>Rol en el Servidor</span>
+                <span>--</span>
+              </div>
+            </div>
+            <div class="account-info account-info--yellow">
+              <div>
+                <span class="account-info-title">Información Importante</span>
+                <span class="account-info-desc">
+                  Una vez que inicies sesión y entres al servidor, no podrás
+                  crear otra cuenta. La muerte resulta en un baneo permanente.
+                </span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>`;
 
 document.getElementById("play")?.addEventListener("click", () => {
     const app = document.getElementById("app");
@@ -521,6 +626,32 @@ document.getElementById("updates")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", updateDashboard);
         toggleActiveButton("updates");
+        // Re-initialize icons
+        // @ts-ignore
+        if (window.lucide) {
+            // @ts-ignore
+            window.lucide.createIcons();
+        }
+        createIcons({ icons: icons });
+    }
+});
+
+document.getElementById("account")?.addEventListener("click", () => {
+    const app = document.getElementById("app");
+    const dashboard = document.getElementById("dashboard");
+    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
+
+    if (dashboard) {
+        dashboard.remove();
+    }
+
+    if (dashboardCss) {
+        dashboardCss.href = "/src/css/dashboard-signin.css";
+    }
+
+    if (app) {
+        app.insertAdjacentHTML("beforeend", accountDashboard);
+        toggleActiveButton("account");
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
