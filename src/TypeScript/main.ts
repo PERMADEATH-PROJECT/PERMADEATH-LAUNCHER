@@ -14,7 +14,6 @@ type LauncherOptions = {
 
 async function read_options() {
     options = await invoke<LauncherOptions>("read_options");
-    console.log(options);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
