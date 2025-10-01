@@ -3,6 +3,7 @@ use dirs_next::config_dir;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LauncherOptions {
+    #[serde(skip_serializing, skip_deserializing)]
     pub launcher_dir: Option<std::path::PathBuf>,
     pub init_on_start: bool,
     pub auto_update: bool,
