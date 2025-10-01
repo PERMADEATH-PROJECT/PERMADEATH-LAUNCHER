@@ -206,7 +206,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
             </section>
             <div class="config-footer">
                 <button class="btn btn--light" type="reset">Restablecer</button>
-                <button class="btn btn--red" type="submit">Guardar Cambios</button>
+                <button class="btn btn--red" type="submit" id="config-save">Guardar Cambios</button>
             </div>
         </form>
     </div>`;

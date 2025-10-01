@@ -1,5 +1,5 @@
-import { invoke } from "@tauri-apps/api/core";
 import "../css-imports.ts"
+import { invoke } from "@tauri-apps/api/core";
 
 let options: LauncherOptions;
 
@@ -17,9 +17,9 @@ async function read_options() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  console.log("Cargando opciones...");
+  console.log("Loading options...");
   read_options().then(() => {
-    console.log("Opciones cargadas.");
+    console.log("Options loaded.");
   });
 });
 
