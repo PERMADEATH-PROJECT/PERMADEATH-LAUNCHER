@@ -234,6 +234,101 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
             </div>
         </form>
     </div>`;
+const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
+            <h1 class="vm-title">
+                <i data-lucide="Zap"></i>
+                Configuración Java VM
+            </h1>
+            <div class="vm-alert vm-alert--yellow">
+                <i data-lucide="Info"></i>
+                <span>
+                PERMADEATHSMP requiere configuraciones específicas de Java para manejar las mecánicas complejas del mod. Cambios incorrectos pueden afectar el rendimiento.
+            </span>
+            </div>
+            <form class="vm-grid">
+                <!-- Memoria -->
+                <section class="vm-section">
+                    <div class="vm-section__header">
+                        <i data-lucide="memory-stick"></i>
+                        Memoria
+                    </div>
+                    <div class="vm-row">
+                        <label class="vm-label">
+                            Memoria Asignada
+                            <input type="text" class="vm-input" value="6G" />
+                        </label>
+                    </div>
+                    <div class="vm-row">
+                        <div class="vm-recommendation">
+                            <i data-lucide="Info"></i>
+                            <span>
+                            <strong>Recomendación</strong><br>
+                            Para PERMADEATHSMP se recomienda mínimo 6GB debido a los mobs modificados y dimensiones transformadas.
+                        </span>
+                        </div>
+                    </div>
+                </section>
+                <!-- Rendimiento -->
+                <section class="vm-section">
+                    <div class="vm-section__header vm-section__header--green">
+                        <i data-lucide="Gauge"></i>
+                        Rendimiento
+                    </div>
+                    <div class="vm-row">
+                        <label class="vm-label">
+                            Garbage Collector
+                            <select class="vm-select">
+                                <option>G1GC (Recomendado)</option>
+                                <option>CMS</option>
+                                <option>Parallel</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="vm-row">
+                        <label class="vm-label">
+                            Versión de Java
+                            <select class="vm-select">
+                                <option>Java 17 (Recomendado)</option>
+                                <option>Java 8</option>
+                                <option>Java 11</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+                <!-- JVM Args -->
+                <section class="vm-section vm-section--full">
+                    <div class="vm-section__header">
+                        <i data-lucide="Zap"></i>
+                        Argumentos JVM Personalizados
+                    </div>
+                    <div class="vm-row">
+                        <label class="vm-label">
+                            Argumentos adicionales
+                            <textarea class="vm-textarea"
+                                      rows="2">-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=200 -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5</textarea>
+                        </label>
+                    </div>
+                    <div class="vm-row vm-row--buttons">
+                        <button type="button" class="vm-btn vm-btn--white">Valores por Defecto</button>
+                        <button type="button" class="vm-btn vm-btn--yellow">Optimizado PERMADEATHSMP</button>
+                        <button type="button" class="vm-btn vm-btn--blue">Máximo Rendimiento</button>
+                    </div>
+                    <div class="vm-row">
+                        <div class="vm-critical">
+                            <i data-lucide="triangle-alert"></i>
+                            <span>
+                            <strong>Configuración Crítica</strong><br>
+                            Los argumentos optimizados son esenciales para manejar las mecánicas intensivas como el sistema de mods por niveles, las dimensiones transformadas y los eventos del Tren de la Muerte sin lag.
+                        </span>
+                        </div>
+                    </div>
+                </section>
+                <div class="vm-footer">
+                    <button type="button" class="vm-btn vm-btn--white">Probar Configuración</button>
+                    <button type="submit" class="vm-btn vm-btn--orange">Aplicar Cambios</button>
+                </div>
+            </form>
+        </div>`
 
 document.getElementById("play")?.addEventListener("click", () => {
     const app = document.getElementById("app");
@@ -277,6 +372,32 @@ document.getElementById("config")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", configDashboard);
         toggleActiveButton("config");
+        // Re-initialize icons
+        // @ts-ignore
+        if (window.lucide) {
+            // @ts-ignore
+            window.lucide.createIcons();
+        }
+        createIcons({ icons: icons });
+    }
+});
+
+document.getElementById("vm")?.addEventListener("click", () => {
+    const app = document.getElementById("app");
+    const dashboard = document.getElementById("dashboard");
+    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
+
+    if (dashboard) {
+        dashboard.remove();
+    }
+
+    if (dashboardCss) {
+        dashboardCss.href = "/src/css/dashboard-vm.css";
+    }
+
+    if (app) {
+        app.insertAdjacentHTML("beforeend", vmDashboard);
+        toggleActiveButton("vm");
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
