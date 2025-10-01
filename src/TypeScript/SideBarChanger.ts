@@ -250,6 +250,7 @@ document.getElementById("play")?.addEventListener("click", () => {
 
     if (app) {
         app.insertAdjacentHTML("beforeend", playDashboard);
+        toggleActiveButton("play");
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
@@ -275,6 +276,7 @@ document.getElementById("config")?.addEventListener("click", () => {
 
     if (app) {
         app.insertAdjacentHTML("beforeend", configDashboard);
+        toggleActiveButton("config");
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
@@ -284,3 +286,15 @@ document.getElementById("config")?.addEventListener("click", () => {
         createIcons({ icons: icons });
     }
 });
+
+// Remove the "sidebar__btn--primary" class from all sidebar buttons except the clicked one
+function toggleActiveButton(clickedButtonId: string) {
+    const buttons = document.querySelectorAll('.sidebar__btn');
+    buttons.forEach(button => {
+        if (button.id === clickedButtonId) {
+            button.classList.add('sidebar__btn--primary');
+        } else {
+            button.classList.remove('sidebar__btn--primary');
+        }
+    });
+}
