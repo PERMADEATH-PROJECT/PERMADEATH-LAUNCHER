@@ -2,7 +2,7 @@
 name = "permadeath-launcher"
 version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["Ponchisao326"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -13,6 +13,11 @@ edition = "2021"
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
 name = "permadeath_launcher_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "permadeath-launcher"
+path = "src/main.rs"
+windows_subsystem = "windows"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
