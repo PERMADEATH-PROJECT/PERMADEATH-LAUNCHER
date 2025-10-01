@@ -21,6 +21,8 @@ import {
     LogOut
 } from 'lucide';
 
+import { options } from './main.ts';
+
 const icons = {
     Skull,
     Settings,
@@ -158,39 +160,18 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         Inicio automático
                         <div class="config-inputs">
                             <span class="config-desc">Lanzar el juego automáticamente al abrir</span>
-                            <input type="checkbox" class="switch-input" />
+                            <input type="checkbox" class="switch-input" id="auto_init"/>
                             <span class="switch"></span>
                         </div>
                     </label>
                 </div>
                 <div class="config-row">
                     <label class="config-label">
-                        Mostrar advertencias de muerte
+                        Mostrar la consola de depuración
                         <div class="config-inputs">
-                            <span class="config-desc">Recordatorios sobre permadeath</span>
-                            <input type="checkbox" class="switch-input" />
+                            <span class="config-desc">Cuando se abra el juego, mostrar la consola</span>
+                            <input type="checkbox" class="switch-input" id="debug_console" />
                             <span class="switch"></span>
-                        </div>
-                    </label>
-                </div>
-                <div class="config-row">
-                    <label class="config-label">
-                        Modo compacto
-                        <div class="config-inputs">
-                            <span class="config-desc">Interfaz más pequeña</span>
-                            <input type="checkbox" class="switch-input" />
-                            <span class="switch"></span>
-                        </div>
-                    </label>
-                </div>
-                <div class="config-row">
-                    <label class="config-label" style="margin-bottom:0;">
-                        Idioma
-                        <div class="config-inputs">
-                            <select class="select-input">
-                                <option>Español</option>
-                                <option>Inglés</option>
-                            </select>
                         </div>
                     </label>
                 </div>
@@ -206,19 +187,9 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         Directorio del juego
                         <div class="config-inputs">
                             <div class="input-group">
-                                <input type="text" class="input-text" value="%APPDATA%/.minecraft-Launcher-CLI" readonly />
+                                <input type="text" class="input-text" value="%APPDATA%/.minecraft-Launcher-CLI" id="game_dir" readonly />
                                 <button class="btn btn--light" type="button">Cambiar</button>
                             </div>
-                        </div>
-                    </label>
-                </div>
-                <div class="config-row">
-                    <label class="config-label">
-                        Mantener logs detallados
-                        <div class="config-inputs">
-                            <span class="config-desc">Para debugging</span>
-                            <input type="checkbox" class="switch-input" />
-                            <span class="switch"></span>
                         </div>
                     </label>
                 </div>
@@ -227,7 +198,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         Copia de seguridad automática
                         <div class="config-inputs">
                             <span class="config-desc">Backup de configuración</span>
-                            <input type="checkbox" class="switch-input" />
+                            <input type="checkbox" class="switch-input" id="automatic_backup" />
                             <span class="switch"></span>
                         </div>
                     </label>
@@ -575,6 +546,12 @@ document.getElementById("config")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", configDashboard);
         toggleActiveButton("config");
+
+        // Modify the values of the checkboxes based on the options variable
+        (document.getElementById("auto_init") as HTMLInputElement).checked = options.init_on_start;
+        (document.getElementById("debug_console") as HTMLInputElement).checked = options.debug_console;
+        (document.getElementById("automatic_backup") as HTMLInputElement).checked = options.automatic_backup;
+
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
