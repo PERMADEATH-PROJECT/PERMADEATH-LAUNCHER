@@ -18,6 +18,8 @@ import {
     Gauge,
     User,
     ShieldCheck,
+    MinusCircle,
+    XCircle
 } from 'lucide';
 
 const icons = {
@@ -38,11 +40,12 @@ const icons = {
     Info,
     MemoryStick,
     User,
-    ShieldCheck
+    ShieldCheck,
+    MinusCircle,
+    XCircle
 };
 
 // Change the dashboard and css when clicked on the sidebar
-
 const playDashboard = `<div class="dashboard" id="dashboard">
     <div class="dashboard-center-wrapper">
       <div class="alert-warning">

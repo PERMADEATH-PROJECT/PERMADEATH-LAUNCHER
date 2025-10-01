@@ -1,5 +1,4 @@
 import {
-    createIcons,
     Skull,
     Settings,
     Download,
@@ -18,28 +17,31 @@ import {
     Gauge,
     User,
     ShieldCheck,
-
+    MinusCircle,
+    XCircle, createIcons
 } from 'lucide';
 
 createIcons({
-  icons: {
-      Skull,
-      Settings,
-      Download,
-      FolderOpen,
-      LogIn,
-      Swords,
-      Heart,
-      Zap,
-      TriangleAlert,
-      Play,
-      Users,
-      Clock,
-      Gamepad2,
-      Gauge,
-      Info,
-      MemoryStick,
-      User,
-      ShieldCheck
-  }
+    icons: {
+        Skull,
+        Settings,
+        Download,
+        FolderOpen,
+        LogIn,
+        Swords,
+        Heart,
+        Zap,
+        TriangleAlert,
+        Play,
+        Users,
+        Clock,
+        Gamepad2,
+        Gauge,
+        Info,
+        MemoryStick,
+        User,
+        ShieldCheck,
+        MinusCircle,
+        XCircle
+    }
 });

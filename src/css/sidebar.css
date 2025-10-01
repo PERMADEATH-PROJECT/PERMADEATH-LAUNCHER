@@ -26,6 +26,25 @@ body {
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--sidebar-fg);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.close-btn--red {
+    color: var(--sidebar-primary);
+}
+
+.close-btn--yellow {
+    color: var(--icon-yellow);
+}
+
 .sidebar {
   width: 320px;
   background: var(--sidebar-bg);
