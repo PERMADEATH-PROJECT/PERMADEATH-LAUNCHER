@@ -35,7 +35,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 #### Libraries and Tools
 
-- **Minecraft CLI Launcher (Fully done):**
+- **[Minecraft CLI Launcher](https://github.com/ponchisao326/Minecraft-Launcher-CLI) (Fully done):**
     - [x] Microsoft auth (OAuth2)
     - [x] Offline mode
     - [x] Minecraft version selection
@@ -44,25 +44,25 @@ This project is a modern, highly customizable launcher for SMP servers with perm
     - [x] Customizable via command line: game version, RAM, working directory, etc.
     - [x] Progress reporting and detailed logging
 
-- **Request handler list (Fully done):**
+- **[Request handler lib](https://github.com/ponchisao326/launcher-request-handler) (Fully done):**
     - [x] Version check: Compares current version to one published at a remote endpoint.
     - [x] Update panel: Retrieves details to display update info (description, changelog, image, etc.) from a remote JSON file.
     - [x] File download: Downloads ZIP files from a URL and stores them at a specified location.
     - [x] JSON utilities: Downloads and deserializes JSON files into any type implementing Deserialize.
 
-- **Launcher Installer Handler (Fully done):**
+- **[Launcher Installer Handler](https://github.com/ponchisao326/launcher-installer-handler) (Fully done):**
     - [x] Flexible extraction: Extracts ZIP files to any directory, ensuring all folders are created as needed.
     - [x] Automatic cleanup: Optionally deletes the ZIP file after extraction.
     - [x] System restart: Optionally restarts the system after installing or updating.
     - [x] Easy integration: Designed for use within Rust-based Minecraft launchers or any application requiring robust ZIP extraction and post-update actions.
 
-- **Minecraft Launcher Backup Library (Fully done):**
+- **[Minecraft Launcher Backup Library](https://github.com/ponchisao326/launcher-minecraft-handler) (Fully done):**
     - [x] Customizable backup options: Select which Minecraft folders to back up, set output paths, toggle compression, and exclude certain file extensions.
     - [x] Automatic metadata generation: Each backup generates a JSON file containing timestamp, size, file count, and backup options for tracking and auditing.
     - [x] ZIP compression: Optionally compress backups into a single ZIP file, including the backup metadata.
     - [x] Easy integration: Designed for Rust-based Minecraft launchers or any application needing robust backup functionality.
 
-- **Java Installation Handler (All to do):**
+- **[Java Installation Handler]() (All to do):**
     - [ ] Detect existing Java installations, automatically identifying version numbers, bin paths, and status flags.
     - [ ] (Possibly) Apply Java updates automatically, automatically replacing each installed version with a newer release.
     - [ ] Prompt users before using a local version, rather than running it by default, unless otherwise specified.
