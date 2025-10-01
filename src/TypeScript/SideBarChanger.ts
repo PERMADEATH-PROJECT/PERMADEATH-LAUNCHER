@@ -409,7 +409,7 @@ document.getElementById("vm")?.addEventListener("click", () => {
 });
 
 // Remove the "sidebar__btn--primary" class from all sidebar buttons except the clicked one
-function toggleActiveButton(clickedButtonId: string) {
+function toggleActiveButton(clickedButtonId: string): void {
     const buttons = document.querySelectorAll('.sidebar__btn');
     buttons.forEach(button => {
         if (button.id === clickedButtonId) {
