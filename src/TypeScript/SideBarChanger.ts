@@ -18,8 +18,7 @@ import {
     Gauge,
     User,
     ShieldCheck,
-    MinusCircle,
-    XCircle
+    LogOut
 } from 'lucide';
 
 const icons = {
@@ -41,8 +40,7 @@ const icons = {
     MemoryStick,
     User,
     ShieldCheck,
-    MinusCircle,
-    XCircle
+    LogOut
 };
 
 // Change the dashboard and css when clicked on the sidebar

@@ -17,8 +17,8 @@ import {
     Gauge,
     User,
     ShieldCheck,
-    MinusCircle,
-    XCircle, createIcons
+    createIcons,
+    LogOut
 } from 'lucide';
 
 createIcons({
@@ -41,7 +41,6 @@ createIcons({
         MemoryStick,
         User,
         ShieldCheck,
-        MinusCircle,
-        XCircle
+        LogOut
     }
 });
