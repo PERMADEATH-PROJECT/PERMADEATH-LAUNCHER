@@ -1,23 +1,27 @@
 import { invoke } from "@tauri-apps/api/core";
 import "../css-imports.ts"
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
+let options: LauncherOptions;
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
+type LauncherOptions = {
+    launcher_dir?: string;
+    init_on_start: boolean;
+    auto_update: boolean;
+    notification_enabled: boolean;
+    debug_console: boolean;
+    automatic_backup: boolean;
+};
+
+async function read_options() {
+    options = await invoke<LauncherOptions>("read_options");
+    console.log(options);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
+  console.log("Cargando opciones...");
+  read_options().then(() => {
+    console.log("Opciones cargadas.");
   });
 });
+
+export { options };
