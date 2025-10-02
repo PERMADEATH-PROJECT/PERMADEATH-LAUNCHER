@@ -6,6 +6,7 @@ import {invoke} from "@tauri-apps/api/core";
 // Evento para el botón "Restablecer"
 document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    const dashboard = document.getElementById('dashboard') as HTMLElement;
     if (target.matches('button[type="reset"]')) {
         // Restablecer los valores de los checkboxes a los valores por defecto
         (document.getElementById("auto_init") as HTMLInputElement).checked = false;
@@ -19,10 +20,10 @@ document.addEventListener('click', (e) => {
         invoke('save_options', {options: options}).then((status) => {
             if (status) {
                 console.log("Options saved successfully.");
-                alert("Options saved successfully.");
+                dashboard.insertAdjacentHTML("beforeend", "Options reset to default values.");
             } else {
                 console.error("Failed to save options.");
-                alert("Failed to save options. If you think this is an error, please report it.");
+                dashboard.insertAdjacentHTML("beforeend", "Failed to reset options. If you think this is an error, please report it.");
             }
         });
     }
@@ -31,6 +32,7 @@ document.addEventListener('click', (e) => {
 // Evento para el botón "Guardar Cambios"
 document.addEventListener('submit', (e) => {
     const form = e.target as HTMLFormElement;
+    const dashboard = document.getElementById('dashboard') as HTMLElement;
     if (form.classList.contains('config-grid')) {
         e.preventDefault();
         // Guardar los valores actuales en el objeto options
@@ -41,10 +43,10 @@ document.addEventListener('submit', (e) => {
         invoke('save_options', {options: options}).then((status) => {
             if (status) {
                 console.log("Options saved successfully.");
-                alert("Options saved successfully.");
+                dashboard.insertAdjacentHTML("beforeend", "Options saved successfully.");
             } else {
                 console.error("Failed to save options.");
-                alert("Failed to save options. If you think this is an error, please report it.");
+                dashboard.insertAdjacentHTML("beforeend", "Failed to save options. If you think this is an error, please report it.");
             }
         });
     }
