@@ -28,7 +28,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 #### To be implemented in the launcher (All to do)
 - [ ] Server connection (Status, online players, stats, current day, etc)
 - [ ] Update control
-- [ ] Apply config changes to the application
+- [x] Apply config changes to the application
 - [ ] Apply Java VM changes to the application
 - [ ] Implement log-in with launcher account
 - [ ] Implement log-out with launcher account
