@@ -4,6 +4,7 @@ use dirs_next::config_dir;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LauncherOptions {
     pub launcher_dir: Option<std::path::PathBuf>,
+    pub game_dir: Option<std::path::PathBuf>,
     pub init_on_start: bool,
     pub auto_update: bool,
     pub notification_enabled: bool,
@@ -19,8 +20,15 @@ impl LauncherOptions {
             path
         });
 
+        let game_dir = dirs_next::data_dir().map(|mut path| {
+            path.push(".Permadeath");
+            println!("Game directory configured at: {:?}", path);
+            path
+        });
+
         Self {
             launcher_dir,
+            game_dir,
             init_on_start: false,
             auto_update: true,
             notification_enabled: false,

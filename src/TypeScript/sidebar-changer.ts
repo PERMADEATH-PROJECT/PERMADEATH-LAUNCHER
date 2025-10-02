@@ -187,7 +187,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         Directorio del juego
                         <div class="config-inputs">
                             <div class="input-group">
-                                <input type="text" class="input-text" value="%APPDATA%/.minecraft-Launcher-CLI" id="game_dir" readonly />
+                                <input type="text" class="input-text" value="%APPDATA%/.Permadeath" id="game_dir" readonly />
                                 <button class="btn btn--light" type="button">Cambiar</button>
                             </div>
                         </div>

@@ -12,10 +12,13 @@ document.addEventListener('click', (e) => {
         (document.getElementById("auto_init") as HTMLInputElement).checked = false;
         (document.getElementById("debug_console") as HTMLInputElement).checked = false;
         (document.getElementById("automatic_backup") as HTMLInputElement).checked = true;
+        (document.getElementById("game_dir") as HTMLInputElement).value = "%APPDATA%/.Permadeath";
+
 
         options.init_on_start = false;
         options.debug_console = false;
         options.automatic_backup = true;
+        options.game_dir = "%APPDATA%/.Permadeath";
 
         invoke('save_options', {options: options}).then((status) => {
             if (status) {

@@ -8,9 +8,12 @@ fn read_options() -> LauncherOptions {
     LauncherOptions::load()
 }
 
+/// Save options from the struct to a JSON file in the launcher directory
 #[tauri::command]
 fn save_options(options: LauncherOptions) -> bool {
-    // Save options from the struct to a JSON file in the launcher directory
+    // If the game_dir have %appdata% in his path, replace it with config_dir
+    let options_str = format!("{:?}", options);
+
     println!("Saving options: {:?}", options);
     options.save();
     println!("Saved options: {:?}", options);

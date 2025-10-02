@@ -5,6 +5,7 @@ let options: LauncherOptions;
 
 type LauncherOptions = {
     launcher_dir?: string;
+    game_dir?: string;
     init_on_start: boolean;
     auto_update: boolean;
     notification_enabled: boolean;
