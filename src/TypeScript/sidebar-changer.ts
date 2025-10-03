@@ -18,7 +18,9 @@ import {
     Gauge,
     User,
     ShieldCheck,
-    LogOut
+    LogOut,
+    RefreshCw,
+    AlertCircle
 } from 'lucide';
 
 import { options } from './main.ts';
@@ -42,7 +44,9 @@ const icons = {
     MemoryStick,
     User,
     ShieldCheck,
-    LogOut
+    LogOut,
+    RefreshCw,
+    AlertCircle
 };
 
 // Change the dashboard and css when clicked on the sidebar
@@ -312,7 +316,7 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
             Actualizaciones
           </h1>
           <button class="updates-btn updates-btn--blue" type="button">
-            <i data-lucide="RefreshCw"></i>
+            <i data-lucide="refresh-cw"></i>
             Buscar Actualizaciones
           </button>
         </div>
@@ -325,7 +329,7 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
           </div>
           <div class="updates-mod-status">
             <span class="updates-status-icon"
-              ><i data-lucide="AlertCircle"></i
+              ><i data-lucide="alert-circle"></i
             ></span>
             <span class="updates-status-label">Actualización Disponible</span>
           </div>
