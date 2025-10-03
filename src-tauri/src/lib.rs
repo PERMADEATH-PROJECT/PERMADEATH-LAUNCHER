@@ -1,6 +1,7 @@
 mod options;
 
 use options::launcher_option_handler::LauncherOptions;
+use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 #[tauri::command]
 fn read_options() -> LauncherOptions {
@@ -18,6 +19,12 @@ fn save_options(options: LauncherOptions) -> bool {
     true.into()
 }
 
+#[tauri::command]
+fn return_default_game_dir(options: LauncherOptions) -> String {
+    LauncherOptions::get_default_game_dir()
+        .map(|path| path.to_string_lossy().into_owned())
+        .unwrap_or_default().into()
+}
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Try to load existing options and if not present, create new ones
@@ -34,7 +41,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             read_options,
-            save_options
+            save_options,
+            return_default_game_dir
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

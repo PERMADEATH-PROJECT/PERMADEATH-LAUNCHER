@@ -100,4 +100,11 @@ impl LauncherOptions {
         println!("Launcher directory is not configured to check the file.");
         false
     }
+    
+    pub fn get_default_game_dir() -> Option<std::path::PathBuf> {
+        dirs_next::data_dir().map(|mut path| {
+            path.push(".Permadeath");
+            path
+        })
+    }
 }
