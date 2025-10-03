@@ -188,7 +188,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         <div class="config-inputs">
                             <div class="input-group">
                                 <input type="text" class="input-text" value="" id="game_dir" readonly />
-                                <button class="btn btn--light" type="button">Cambiar</button>
+                                <button class="btn btn--light" type="button" id="change_game_dir">Cambiar</button>
                             </div>
                         </div>
                     </label>

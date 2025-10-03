@@ -1,2 +1,1 @@
 pub mod launcher_option_handler;
-pub mod directory_window_management;

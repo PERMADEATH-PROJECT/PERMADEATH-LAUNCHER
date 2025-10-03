@@ -1,9 +1,9 @@
-// Este archivo gestiona los eventos de los botones "Restablecer" y "Guardar Cambios" en el dashboard de configuración.
+// This file handles the events for saving and resetting configuration options in the application.
 
 import { options } from '../main.ts';
 import {invoke} from "@tauri-apps/api/core";
 
-// Evento para el botón "Restablecer"
+// Event listener for the "Reset" button
 document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     const dashboard = document.getElementById('dashboard') as HTMLElement;
@@ -32,7 +32,7 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Evento para el botón "Guardar Cambios"
+// Event listener for the "Save Changes" button
 document.addEventListener('submit', (e) => {
     const form = e.target as HTMLFormElement;
     const dashboard = document.getElementById('dashboard') as HTMLElement;
@@ -42,7 +42,8 @@ document.addEventListener('submit', (e) => {
         options.init_on_start = (document.getElementById("auto_init") as HTMLInputElement).checked;
         options.debug_console = (document.getElementById("debug_console") as HTMLInputElement).checked;
         options.automatic_backup = (document.getElementById("automatic_backup") as HTMLInputElement).checked;
-        // Aquí podrías agregar lógica para persistir los cambios (por ejemplo, localStorage o IPC)
+
+        // Save the game directory only if it's not empty
         invoke('save_options', {options: options}).then((status) => {
             if (status) {
                 console.log("Options saved successfully.");
