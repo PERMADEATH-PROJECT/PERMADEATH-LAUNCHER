@@ -11,15 +11,14 @@ fn read_options() -> LauncherOptions {
 /// Save options from the struct to a JSON file in the launcher directory
 #[tauri::command]
 fn save_options(options: LauncherOptions) -> bool {
-    // If the game_dir have %appdata% in his path, replace it with config_dir
-    let options_str = format!("{:?}", options);
-
     println!("Saving options: {:?}", options);
     options.save();
     println!("Saved options: {:?}", options);
     // Return true if save was successful
     true.into()
 }
+
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
