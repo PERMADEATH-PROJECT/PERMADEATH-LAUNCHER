@@ -187,7 +187,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                         Directorio del juego
                         <div class="config-inputs">
                             <div class="input-group">
-                                <input type="text" class="input-text" value="%APPDATA%/.Permadeath" id="game_dir" readonly />
+                                <input type="text" class="input-text" value="" id="game_dir" readonly />
                                 <button class="btn btn--light" type="button">Cambiar</button>
                             </div>
                         </div>
@@ -495,7 +495,7 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
               <div>
                 <span class="account-info-title">Información Importante</span>
                 <span class="account-info-desc">
-                  Una vez que inicies sesión y entres al servidor, no podrás
+                  Una vez que inicies sesión y entras al servidor, no podrás
                   crear otra cuenta. La muerte resulta en un baneo permanente.
                 </span>
               </div>
@@ -547,12 +547,20 @@ document.getElementById("config")?.addEventListener("click", () => {
         app.insertAdjacentHTML("beforeend", configDashboard);
         toggleActiveButton("config");
 
-        // Modify the values of the checkboxes based on the options variable
+        // Obtener el input y el botón después de insertar el HTML
+        const game_dir_input = document.getElementById("game_dir") as HTMLInputElement;
+
+        // Modificar los valores de los checkboxes según options
         (document.getElementById("auto_init") as HTMLInputElement).checked = options.init_on_start;
         (document.getElementById("debug_console") as HTMLInputElement).checked = options.debug_console;
         (document.getElementById("automatic_backup") as HTMLInputElement).checked = options.automatic_backup;
 
-        // Re-initialize icons
+        // Actualizar el campo de directorio del juego
+        if (game_dir_input) {
+            console.log('Updating the Game Dir Value: ' + options.game_dir);
+            game_dir_input.value = options.game_dir || "%APPDATA%/.Permadeath";
+        }
+
         // @ts-ignore
         if (window.lucide) {
             // @ts-ignore
