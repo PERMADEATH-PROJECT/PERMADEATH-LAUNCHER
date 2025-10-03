@@ -100,23 +100,4 @@ impl LauncherOptions {
         println!("Launcher directory is not configured to check the file.");
         false
     }
-
-    pub fn get_game_dir(&self) -> Option<std::path::PathBuf> {
-        self.game_dir.clone()
-    }
-
-    pub fn update_path_field(&mut self, field_name: &str, path: &str) -> bool {
-        let path_buf = std::path::PathBuf::from(path);
-        match field_name {
-            "launcher_dir" => {
-                self.launcher_dir = Some(path_buf);
-                true
-            },
-            "game_dir" => {
-                self.game_dir = Some(path_buf);
-                true
-            },
-            _ => false
-        }
-    }
 }
