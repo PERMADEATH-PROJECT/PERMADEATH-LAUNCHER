@@ -1,7 +1,6 @@
 mod options;
 
 use options::launcher_option_handler::LauncherOptions;
-use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 #[tauri::command]
 fn read_options() -> LauncherOptions {
@@ -20,7 +19,7 @@ fn save_options(options: LauncherOptions) -> bool {
 }
 
 #[tauri::command]
-fn return_default_game_dir(options: LauncherOptions) -> String {
+fn return_default_game_dir() -> String {
     LauncherOptions::get_default_game_dir()
         .map(|path| path.to_string_lossy().into_owned())
         .unwrap_or_default().into()

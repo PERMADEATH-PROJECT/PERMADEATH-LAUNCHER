@@ -378,8 +378,8 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
                 >Descargar e instalar actualizaciones automáticamente</span
               >
             </div>
-            <button class="updates-btn updates-btn--white" type="button">
-              Habilitado
+            <button class="updates-btn updates-btn--white" type="button" id="auto_update_btn">
+              Deshabilitado
             </button>
           </div>
           <div class="updates-config-row">
@@ -389,8 +389,8 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
                 >Mostrar notificaciones de nuevas versiones</span
               >
             </div>
-            <button class="updates-btn updates-btn--white" type="button">
-              Habilitado
+            <button class="updates-btn updates-btn--white" type="button" id="notifications_btn">
+              Deshabilitado
             </button>
           </div>
           <div class="updates-config-warning">
@@ -586,6 +586,7 @@ document.getElementById("vm")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", vmDashboard);
         toggleActiveButton("vm");
+
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {
@@ -612,6 +613,27 @@ document.getElementById("updates")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", updateDashboard);
         toggleActiveButton("updates");
+        const auto_update_btn = document.getElementById("auto_update_btn");
+        const notifications_btn = document.getElementById("notifications_btn");
+
+        if (auto_update_btn) {
+            console.log("Auto Update is: " + options.auto_update);
+            if (options.auto_update) {
+                auto_update_btn.classList.add("updates-btn--green");
+                auto_update_btn.classList.remove("updates-btn--white");
+                auto_update_btn.textContent = "Habilitado";
+            }
+        }
+
+        if (notifications_btn) {
+            console.log("Notifications are: " + options.notification_enabled);
+            if (options.notification_enabled) {
+                notifications_btn.classList.add("updates-btn--green");
+                notifications_btn.classList.remove("updates-btn--white");
+                notifications_btn.textContent = "Habilitado";
+            }
+        }
+
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {

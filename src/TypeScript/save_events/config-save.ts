@@ -8,7 +8,7 @@ import { message } from '@tauri-apps/plugin-dialog';
 document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     if (target.matches('button[type="reset"]')) {
-        invoke('return_default_game_dir', {options: options}).then((game_dir) => {
+        invoke('return_default_game_dir').then((game_dir) => {
             console.log("Default game directory retrieved: " + game_dir);
 
             // Restablecer los valores de los checkboxes a los valores por defecto
