@@ -27,14 +27,14 @@ fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Err
         let log_path = logs_dir.join(&log_filename);
 
         CombinedLogger::init(vec![
-            // Log a consola
+            // Console log
             TermLogger::new(
                 LevelFilter::Info,
                 Config::default(),
                 TerminalMode::Mixed,
                 ColorChoice::Auto
             ),
-            // Log a archivo
+            // File log
             WriteLogger::new(
                 LevelFilter::Info,
                 Config::default(),

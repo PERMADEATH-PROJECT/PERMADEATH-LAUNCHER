@@ -11,7 +11,7 @@ document.addEventListener('click', (e) => {
         invoke('return_default_game_dir').then((game_dir) => {
             console.log("Default game directory retrieved: " + game_dir);
 
-            // Restablecer los valores de los checkboxes a los valores por defecto
+            // Restart the form fields to their default values
             (document.getElementById("auto_init") as HTMLInputElement).checked = false;
             (document.getElementById("debug_console") as HTMLInputElement).checked = false;
             (document.getElementById("automatic_backup") as HTMLInputElement).checked = true;
@@ -42,7 +42,7 @@ document.addEventListener('submit', (e) => {
     const form = e.target as HTMLFormElement;
     if (form.classList.contains('config-grid')) {
         e.preventDefault();
-        // Guardar los valores actuales en el objeto options
+        // Save the current state of the form fields to the options object
         options.init_on_start = (document.getElementById("auto_init") as HTMLInputElement).checked;
         options.debug_console = (document.getElementById("debug_console") as HTMLInputElement).checked;
         options.automatic_backup = (document.getElementById("automatic_backup") as HTMLInputElement).checked;
