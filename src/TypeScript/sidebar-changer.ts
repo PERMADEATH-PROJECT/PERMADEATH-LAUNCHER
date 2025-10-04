@@ -383,7 +383,7 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
               >
             </div>
             <button class="updates-btn updates-btn--white" type="button" id="auto_update_btn">
-              Deshabilitado
+              Deshabilitadas
             </button>
           </div>
           <div class="updates-config-row">
@@ -394,7 +394,7 @@ const updateDashboard = `<div class="dashboard-updates-wrapper" id="dashboard">
               >
             </div>
             <button class="updates-btn updates-btn--white" type="button" id="notifications_btn">
-              Deshabilitado
+              Deshabilitadas
             </button>
           </div>
           <div class="updates-config-warning">

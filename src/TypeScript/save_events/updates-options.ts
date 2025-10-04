@@ -14,11 +14,11 @@ document.addEventListener("click", (e) => {
                     if (!options.auto_update) {
                         auto_update_btn.classList.remove("updates-btn--green");
                         auto_update_btn.classList.add("updates-btn--white");
-                        auto_update_btn.textContent = "Deshabilitado";
+                        auto_update_btn.textContent = "Deshabilitadas";
                     } else {
                         auto_update_btn.classList.add("updates-btn--green");
                         auto_update_btn.classList.remove("updates-btn--white");
-                        auto_update_btn.textContent = "Habilitado";
+                        auto_update_btn.textContent = "Habilitadas";
                     }
                 }
 
