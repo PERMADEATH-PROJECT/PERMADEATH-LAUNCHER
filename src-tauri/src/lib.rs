@@ -1,6 +1,6 @@
 mod options;
 
-use options::launcher_option_handler::LauncherOptions;
+use options::launcher_options::LauncherOptions;
 use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
