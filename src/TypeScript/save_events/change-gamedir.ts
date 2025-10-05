@@ -2,6 +2,7 @@
 
 import { options } from '../main.ts';
 import { open } from '@tauri-apps/plugin-dialog'
+import { message } from '@tauri-apps/plugin-dialog';
 
 document.addEventListener('click', async (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -16,7 +17,8 @@ document.addEventListener('click', async (e: MouseEvent) => {
             (document.getElementById("game_dir") as HTMLInputElement).value = options.game_dir;
             console.log("Game dir changed to: " + options.game_dir);
         } else {
-            (document.getElementById("game_dir") as HTMLInputElement).value = "An error occurred while selecting the directory.";
+            console.error("Failed to change game dir.");
+            await message('An error occurred while selecting the directory', { title: 'Change Game Directory', kind: 'error'});
         }
     }
 });
