@@ -279,13 +279,14 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                 <section class="vm-section vm-section--full">
                     <div class="vm-section__header">
                         <i data-lucide="Zap"></i>
-                        Argumentos JVM Personalizados
+                        Argumentos JVM
                     </div>
                     <div class="vm-row">
                         <label class="vm-label">
                             Argumentos adicionales
                             <textarea class="vm-textarea"
-                                      rows="2">-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=200 -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5</textarea>
+                                      rows="2"
+                                      id="jvm_args"></textarea>
                         </label>
                     </div>
                     <div class="vm-row vm-row--buttons">

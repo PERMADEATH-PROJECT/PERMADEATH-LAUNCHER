@@ -1,10 +1,11 @@
 mod options;
 
-use options::launcher_options::LauncherOptions;
+use options::{launcher_options::LauncherOptions, game_options::GameOptions};
 use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
+use crate::options::game_options;
 
 /// Configure the logger to log to both console and a file in the logs directory.
 fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Error>> {
@@ -74,9 +75,15 @@ fn return_default_game_dir() -> String {
         .unwrap_or_default().into()
 }
 
+#[tauri::command]
+fn return_java_flags() {
+
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let options = LauncherOptions::new();
+    let game_options = GameOptions::new();
 
     // Logger setup
     if let Err(e) = setup_logger(&options) {
@@ -88,6 +95,13 @@ pub fn run() {
     if !options.is_json_present() {
         info!("Archivo de opciones no encontrado, creando uno nuevo con configuración predeterminada");
         options.save();
+    }
+
+    if game_options.is_json_present(options.clone()) {
+        info!("Archivo de opciones de juego encontrado");
+    } else {
+        info!("Archivo de opciones de juego no encontrado, creando uno nuevo con configuración predeterminada");
+        game_options.save(options.clone());
     }
 
     info!("Configurando Tauri Builder");
