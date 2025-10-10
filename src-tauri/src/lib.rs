@@ -97,9 +97,7 @@ pub fn run() {
         options.save();
     }
 
-    if game_options.is_json_present(options.clone()) {
-        info!("Archivo de opciones de juego encontrado");
-    } else {
+    if !GameOptions::is_json_present(options.clone()) {
         info!("Archivo de opciones de juego no encontrado, creando uno nuevo con configuración predeterminada");
         game_options.save(options.clone());
     }
