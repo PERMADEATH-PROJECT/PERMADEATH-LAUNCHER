@@ -5,7 +5,6 @@ use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
-use crate::options::game_options;
 
 /// Configure the logger to log to both console and a file in the logs directory.
 fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Error>> {
@@ -53,23 +52,23 @@ fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Err
 
 #[tauri::command]
 fn read_options() -> LauncherOptions {
-    info!("Cargando opciones");
+    info!("Loading options");
     let options = LauncherOptions::load();
-    info!("Opciones cargadas: {:?}", options);
+    info!("Options loaded: {:?}", options);
     options
 }
 
 #[tauri::command]
 fn save_options(options: LauncherOptions) -> bool {
-    info!("Guardando opciones: {:?}", options);
+    info!("Saving options: {:?}", options);
     options.save();
-    info!("Opciones guardadas exitosamente");
+    info!("Options saved correctly");
     true
 }
 
 #[tauri::command]
 fn return_default_game_dir() -> String {
-    info!("Obteniendo directorio de juego predeterminado");
+    info!("Obtaining default game directory");
     LauncherOptions::get_default_game_dir()
         .map(|path| path.to_string_lossy().into_owned())
         .unwrap_or_default().into()
@@ -77,9 +76,9 @@ fn return_default_game_dir() -> String {
 
 #[tauri::command]
 fn read_game_options(launcher_options: LauncherOptions) -> GameOptions {
-    info!("Cargando opciones de juego");
+    info!("Loading game options");
     let game_options = GameOptions::load(launcher_options);
-    info!("Opciones de juego cargadas: {:?}", game_options);
+    info!("Game options loaded: {:?}", game_options);
     game_options
 }
 
@@ -90,22 +89,22 @@ pub fn run() {
 
     // Logger setup
     if let Err(e) = setup_logger(&options) {
-        eprintln!("Error al configurar el logger: {}", e);
+        eprintln!("Error while setting up the logger: {}", e);
     }
 
     info!("Iniciando aplicación");
 
     if !options.is_json_present() {
-        info!("Archivo de opciones no encontrado, creando uno nuevo con configuración predeterminada");
+        info!("Options file not found, creating a new one with default settings");
         options.save();
     }
 
     if !GameOptions::is_json_present(options.clone()) {
-        info!("Archivo de opciones de juego no encontrado, creando uno nuevo con configuración predeterminada");
+        info!("Game Options file not found, creating a new one with default settings");
         game_options.save(options.clone());
     }
 
-    info!("Configurando Tauri Builder");
+    info!("Setting up Tauri application");
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
