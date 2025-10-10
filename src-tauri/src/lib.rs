@@ -76,8 +76,11 @@ fn return_default_game_dir() -> String {
 }
 
 #[tauri::command]
-fn return_java_flags() {
-
+fn read_game_options(launcher_options: LauncherOptions) -> GameOptions {
+    info!("Cargando opciones de juego");
+    let game_options = GameOptions::load(launcher_options);
+    info!("Opciones de juego cargadas: {:?}", game_options);
+    game_options
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -110,7 +113,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             read_options,
             save_options,
-            return_default_game_dir
+            return_default_game_dir,
+            read_game_options
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
