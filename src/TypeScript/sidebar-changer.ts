@@ -24,6 +24,8 @@ import {
 } from 'lucide';
 
 import {game_options, options} from './main.ts';
+import {invoke} from "@tauri-apps/api/core";
+import {JavaVersions} from "./enums/java-versions.ts";
 
 const icons = {
     Skull,
@@ -235,7 +237,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                     <div class="vm-row">
                         <label class="vm-label">
                             Memoria Asignada
-                            <input type="text" class="vm-input" value="6G" />
+                            <input type="text" class="vm-input" value="4096MB" id="max_ram"/>
                         </label>
                     </div>
                     <div class="vm-row">
@@ -243,7 +245,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                             <i data-lucide="Info"></i>
                             <span>
                             <strong>Recomendación</strong><br>
-                            Para PERMADEATHSMP se recomienda mínimo 6GB debido a los mobs modificados y dimensiones transformadas.
+                            Para PERMADEATHSMP se recomienda mínimo 4GB debido a los mobs modificados y dimensiones transformadas.
                         </span>
                         </div>
                     </div>
@@ -257,20 +259,16 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                     <div class="vm-row">
                         <label class="vm-label">
                             Garbage Collector
-                            <select class="vm-select">
-                                <option>G1GC (Recomendado)</option>
-                                <option>CMS</option>
-                                <option>Parallel</option>
+                            <select class="vm-select" id="gc_select">
+                                
                             </select>
                         </label>
                     </div>
                     <div class="vm-row">
                         <label class="vm-label">
                             Versión de Java
-                            <select class="vm-select">
-                                <option>Java 17 (Recomendado)</option>
-                                <option>Java 8</option>
-                                <option>Java 11</option>
+                            <select class="vm-select" id="java_version">
+                                
                             </select>
                         </label>
                     </div>
@@ -290,7 +288,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                         </label>
                     </div>
                     <div class="vm-row vm-row--buttons">
-                        <button type="button" class="vm-btn vm-btn--white" id="default_flags">Valores por Defecto</button>
+                        <button type="button" class="vm-btn vm-btn--white" id="default_flags_button">Valores por Defecto</button>
                     </div>
                     <div class="vm-row">
                         <div class="vm-critical">
@@ -305,8 +303,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                     </div>
                 </section>
                 <div class="vm-footer">
-                    <button type="button" class="vm-btn vm-btn--white">Probar Configuración</button>
-                    <button type="submit" class="vm-btn vm-btn--orange">Aplicar Cambios</button>
+                    <button type="submit" class="vm-btn vm-btn--orange" id="apply_vm_changes">Aplicar Cambios</button>
                 </div>
             </form>
         </div>`
@@ -575,7 +572,7 @@ document.getElementById("config")?.addEventListener("click", () => {
     }
 });
 
-document.getElementById("vm")?.addEventListener("click", () => {
+document.getElementById("vm")?.addEventListener("click", async () => {
     const app = document.getElementById("app");
     const dashboard = document.getElementById("dashboard");
     const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
@@ -591,7 +588,39 @@ document.getElementById("vm")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", vmDashboard);
         toggleActiveButton("vm");
+        const max_ram = document.getElementById("max_ram") as HTMLInputElement;
+        const gc_select = document.getElementById("gc_select") as HTMLSelectElement;
+        const java_version = document.getElementById("java_version") as HTMLSelectElement;
         const vm_args = document.getElementById("jvm_args") as HTMLInputElement;
+
+        if (max_ram) {
+            console.log("Loading Max RAM: " + game_options.max_ram);
+            max_ram.value = game_options.max_ram ? game_options.max_ram + 'MB' : '4096MB';
+        }
+
+        if (gc_select) {
+            const gc_options = await invoke<string[]>('get_garbage_collectors');
+            console.log("Loading GC Options: " + gc_options);
+            gc_options.forEach((gc) => {
+                const option = document.createElement("option");
+                option.value = gc;
+                option.text = gc;
+                gc_select.appendChild(option);
+            })
+        }
+
+        if (java_version) {
+            console.log("Loading Java Version: " + game_options.custom_java_path);
+            JavaVersions && Object.values(JavaVersions).forEach((version) => {
+                const option = document.createElement("option");
+                option.value = version;
+                option.text = version;
+                if (game_options.custom_java_path && game_options.custom_java_path.includes(version.split(' ')[1])) {
+                    option.selected = true;
+                }
+                java_version.appendChild(option);
+            });
+        }
 
         if (vm_args) {
             console.log("Loading JVM Args: " + game_options.vm_flags?.join(' '));
