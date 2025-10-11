@@ -5,6 +5,8 @@ use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
+use std::process::Command;
+use launcher_java_installer::JavaSetup;
 use crate::options::game_options::{GarbageCollector, BASE_VM_FLAGS};
 
 /// Configure the logger to log to both console and a file in the logs directory.
@@ -108,7 +110,8 @@ fn save_game_options(game_options: GameOptions, launcher_options: LauncherOption
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+#[tokio::main]
+pub async fn run() {
     let options = LauncherOptions::new();
     let game_options = GameOptions::new();
 
@@ -129,12 +132,73 @@ pub fn run() {
         game_options.save(options.clone());
     }
 
-    info!("Setting up Tauri application");
-    tauri::Builder::default()
-        .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_process::init())
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![
+    let mut java_installed = check_java_version("21");
+    info!("Is Java 21 installed? {}", java_installed);
+    // Check if Java 21 is installed and install it if not present
+    if !java_installed {
+        info!("Java 21 not found, trying to install it...");
+        let java_version = "21";
+
+        // Show info window on start-up
+        if let Err(e) = Command::new("cmd")
+            .args(&["/C", "start", "cmd", "/C", "echo Java 21 has not been found on your system, trying to install it... & pause"])
+            .spawn() {
+            error!("No se pudo mostrar ventana informativa: {}", e);
+        }
+
+        // Get main disk
+        let main_disk = std::env::var("SystemDrive").unwrap_or_else(|_| "C:".into());
+        info!("Main disk: {}", main_disk);
+
+        // Get %temp% dir
+        let temp_dir = std::env::var("TEMP").unwrap_or_else(|_| "C:\\Temp".into());
+        info!("Temp dir: {}", temp_dir);
+
+        let download_path = format!("{}\\java_download.zip", temp_dir);
+        let extract_path = format!("{}\\extracted_java", temp_dir);
+
+        // Get Program Files dir if not present use main disk/java
+        let program_files = std::env::var("ProgramFiles").unwrap_or_else(|_| format!("{}\\Java", main_disk));
+        let install_path = format!("{}\\Java\\jdk-{}", program_files, java_version);
+
+        // Install java
+        let mut setup = JavaSetup::new(java_version, &download_path, &extract_path, &install_path);
+
+        match setup.setup().await {
+            Ok(_) => {
+                info!("Java 21 installation completed successfully");
+                // Verify installation
+                java_installed = check_java_version("21");
+                info!("Java 21 verification after installation: {}", java_installed);
+
+                // Mostrar ventana de éxito
+                if let Err(e) = Command::new("cmd")
+                    .args(&["/C", "start", "cmd", "/C", "echo Java 21 have been installed correctly. & echo The Launcher will shutdown, please re-open it. & pause"])
+                    .spawn() {
+                    error!("No se pudo mostrar ventana informativa de éxito: {}", e);
+                }
+            },
+            Err(e) => {
+                error!("Error during Java setup: {}", e);
+                eprintln!("Error durante la configuración de Java: {}", e);
+
+                // Mostrar ventana de error
+                if let Err(e) = Command::new("cmd")
+                    .args(&["/C", "start", "cmd", "/C", "echo Ha ocurrido un error durante la instalación de Java 21. & echo El programa intentará continuar, pero podría no funcionar correctamente. & pause"])
+                    .spawn() {
+                    error!("No se pudo mostrar ventana informativa de error: {}", e);
+                }
+            }
+        }
+    }
+
+    if java_installed {
+        info!("Setting up Tauri application");
+        tauri::Builder::default()
+            .plugin(tauri_plugin_dialog::init())
+            .plugin(tauri_plugin_process::init())
+            .plugin(tauri_plugin_opener::init())
+            .invoke_handler(tauri::generate_handler![
             read_options,
             save_options,
             return_default_game_dir,
@@ -143,6 +207,34 @@ pub fn run() {
             get_base_jvm_flags,
             save_game_options
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+            .run(tauri::generate_context!())
+            .expect("error while running tauri application");
+    } else {
+        // Show an error message and exit if Java could not be installed
+        error!("No se pudo instalar Java 21. La aplicación no puede continuar.");
+
+        // Error message in a new cmd window
+        if let Err(e) = Command::new("cmd")
+            .args(&["/C", "start", "cmd", "/C", "echo La aplicación requiere Java 21 para funcionar. Por favor, instale Java 21 e intente nuevamente. & pause"])
+            .spawn() {
+            error!("No se pudo mostrar mensaje de error: {}", e);
+        }
+    }
+}
+
+fn check_java_version(target_version: &str) -> bool {
+    let output = Command::new("java")
+        .arg("-version")
+        .output();
+
+    match output {
+        Ok(output) => {
+            // java -version sends output to stderr, not stdout
+            let version_output = String::from_utf8_lossy(&output.stderr);
+
+            // Search for the version in the output
+            version_output.contains(target_version)
+        },
+        Err(_) => false, // Java is not installed
+    }
 }
