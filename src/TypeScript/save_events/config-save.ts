@@ -7,7 +7,7 @@ import { message } from '@tauri-apps/plugin-dialog';
 // Event listener for the "Reset" button
 document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
-    if (target.matches('button[type="reset"]')) {
+    if (target.matches('#config_reset')) {
         invoke('return_default_game_dir').then((game_dir) => {
             console.log("Default game directory retrieved: " + game_dir);
 

@@ -211,7 +211,7 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                 </div>
             </section>
             <div class="config-footer">
-                <button class="btn btn--light" type="reset">Restablecer</button>
+                <button class="btn btn--light" type="reset" id="config_reset">Restablecer</button>
                 <button class="btn btn--red" type="submit" id="config-save">Guardar Cambios</button>
             </div>
         </form>
@@ -288,7 +288,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                         </label>
                     </div>
                     <div class="vm-row vm-row--buttons">
-                        <button type="button" class="vm-btn vm-btn--white" id="default_flags_button">Valores por Defecto</button>
+                        <button type="reset" class="vm-btn vm-btn--white" id="default_flags_button">Valores por Defecto</button>
                     </div>
                     <div class="vm-row">
                         <div class="vm-critical">
@@ -599,6 +599,8 @@ document.getElementById("vm")?.addEventListener("click", async () => {
         }
 
         if (gc_select) {
+            // Load GC options from Rust
+            console.log("Fetching GC Options from backend...");
             const gc_options = await invoke<string[]>('get_garbage_collectors');
             console.log("Loading GC Options: " + gc_options);
             gc_options.forEach((gc) => {
@@ -607,6 +609,11 @@ document.getElementById("vm")?.addEventListener("click", async () => {
                 option.text = gc;
                 gc_select.appendChild(option);
             })
+            // Select the current GC
+            if (game_options.garbage_collector) {
+                console.log("Selecting current GC: " + game_options.garbage_collector);
+                gc_select.value = game_options.garbage_collector;
+            }
         }
 
         if (java_version) {

@@ -2,7 +2,7 @@ use std::fs::{create_dir_all, write};
 use log::{error, info};
 use crate::options::launcher_options::LauncherOptions;
 
-const BASE_VM_FLAGS: [&str; 10] = [
+pub const BASE_VM_FLAGS: [&str; 10] = [
     "-XX:MaxGCPauseMillis=100",
     "-XX:G1NewSizePercent=30",
     "-XX:G1ReservePercent=20",

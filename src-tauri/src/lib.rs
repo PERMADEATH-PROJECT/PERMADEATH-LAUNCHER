@@ -5,7 +5,7 @@ use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
-use crate::options::game_options::GarbageCollector;
+use crate::options::game_options::{GarbageCollector, BASE_VM_FLAGS};
 
 /// Configure the logger to log to both console and a file in the logs directory.
 fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Error>> {
@@ -91,6 +91,22 @@ fn get_garbage_collectors() -> Vec<GarbageCollector> {
     collectors
 }
 
+#[tauri::command]
+fn get_base_jvm_flags() -> Vec<String> {
+    info!("Retrieving base JVM flags");
+    let flags = BASE_VM_FLAGS.iter().map(|s| s.to_string()).collect();
+    info!("Base JVM flags retrieved: {:?}", flags);
+    flags
+}
+
+#[tauri::command]
+fn save_game_options(game_options: GameOptions, launcher_options: LauncherOptions) -> bool {
+    info!("Saving game options: {:?}", game_options);
+    game_options.save(launcher_options);
+    info!("Game options saved correctly");
+    true
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let options = LauncherOptions::new();
@@ -123,7 +139,9 @@ pub fn run() {
             save_options,
             return_default_game_dir,
             read_game_options,
-            get_garbage_collectors
+            get_garbage_collectors,
+            get_base_jvm_flags,
+            save_game_options
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
