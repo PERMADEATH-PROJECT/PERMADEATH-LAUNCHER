@@ -151,7 +151,7 @@ pub async fn run() {
         info!("Main disk: {}", main_disk);
 
         // Get %temp% dir
-        let temp_dir = std::env::var("TEMP").unwrap_or_else(|_| "C:\\Temp".into());
+        let temp_dir = std::env::var("TEMP").unwrap_or_else(|_| format!("{}\\Temp", main_disk).into());
         info!("Temp dir: {}", temp_dir);
 
         let download_path = format!("{}\\java_download.zip", temp_dir);
