@@ -2,6 +2,19 @@ use std::fs::{create_dir_all, write};
 use log::{error, info};
 use crate::options::launcher_options::LauncherOptions;
 
+const base_vm_flags: [&str; 10] = [
+    "-XX:MaxGCPauseMillis=100",
+    "-XX:G1NewSizePercent=30",
+    "-XX:G1ReservePercent=20",
+    "-XX:+UseStringDeduplication",
+    "-XX:G1HeapRegionSize=32M",
+    "-XX:+TieredCompilation",
+    "-XX:+AlwaysPreTouch",
+    "-Dsun.java2d.opengl=true",
+    "-Xverify:none",
+    "-XX:+UnlockExperimentalVMOptions"
+];
+
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub enum GarbageCollector {
     Serial,
@@ -23,18 +36,7 @@ impl GameOptions {
     pub fn new() -> Self {
         Self {
             max_ram: 4096, // Default to 4096 MB
-            vm_flags: vec![
-                "-XX:MaxGCPauseMillis=100".into(),
-                "-XX:G1NewSizePercent=30".into(),
-                "-XX:G1ReservePercent=20".into(),
-                "-XX:+UseStringDeduplication".into(),
-                "-XX:G1HeapRegionSize=32M".into(),
-                "-XX:+TieredCompilation".into(),
-                "-XX:+AlwaysPreTouch".into(),
-                "-Dsun.java2d.opengl=true".into(),
-                "-Xverify:none".into(),
-                "-XX:+UnlockExperimentalVMOptions".into()
-            ],
+            vm_flags: base_vm_flags.iter().map(|s| s.to_string()).collect(),
             garbage_collector: GarbageCollector::G1GC,
             custom_java_path: None,
         }
