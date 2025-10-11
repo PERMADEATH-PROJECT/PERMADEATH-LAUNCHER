@@ -23,7 +23,7 @@ import {
     AlertCircle
 } from 'lucide';
 
-import { options } from './main.ts';
+import {game_options, options} from './main.ts';
 
 const icons = {
     Skull,
@@ -290,16 +290,16 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                         </label>
                     </div>
                     <div class="vm-row vm-row--buttons">
-                        <button type="button" class="vm-btn vm-btn--white">Valores por Defecto</button>
-                        <button type="button" class="vm-btn vm-btn--yellow">Optimizado PERMADEATHSMP</button>
-                        <button type="button" class="vm-btn vm-btn--blue">Máximo Rendimiento</button>
+                        <button type="button" class="vm-btn vm-btn--white" id="default_flags">Valores por Defecto</button>
                     </div>
                     <div class="vm-row">
                         <div class="vm-critical">
                             <i data-lucide="triangle-alert"></i>
                             <span>
                             <strong>Configuración Crítica</strong><br>
-                            Los argumentos optimizados son esenciales para manejar las mecánicas intensivas como el sistema de mods por niveles, las dimensiones transformadas y los eventos del Tren de la Muerte sin lag.
+                            Los argumentos JVM incorrectos pueden causar inestabilidad o fallos. Asegúrate de entender cada cambio.
+                            Los valores por defecto están optimizados buscando el mayor rendimiento del juego. 
+                            Estos valores están optimizados para jugar en multijugador.  
                         </span>
                         </div>
                     </div>
@@ -591,6 +591,12 @@ document.getElementById("vm")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", vmDashboard);
         toggleActiveButton("vm");
+        const vm_args = document.getElementById("jvm_args") as HTMLInputElement;
+
+        if (vm_args) {
+            console.log("Loading JVM Args: " + game_options.vm_flags?.join(' '));
+            vm_args.value = game_options.vm_flags?.join(' ') || '';
+        }
 
         // Re-initialize icons
         // @ts-ignore
