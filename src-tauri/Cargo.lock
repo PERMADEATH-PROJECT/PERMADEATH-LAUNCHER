@@ -2120,7 +2120,7 @@ dependencies = [
 [[package]]
 name = "launcher-java-installer"
 version = "0.1.0"
-source = "git+https://github.com/PERMADEATH-PROJECT/launcher-java-installer#4db926869436ddb3538833e2d3346d84bc319623"
+source = "git+https://github.com/PERMADEATH-PROJECT/launcher-java-installer?branch=master#3e5a904248754cfe5035a23a1d9b673fc88b548f"
 dependencies = [
  "reqwest",
  "serde_json",

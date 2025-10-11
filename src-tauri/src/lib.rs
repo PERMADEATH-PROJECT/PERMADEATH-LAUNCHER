@@ -141,7 +141,7 @@ pub async fn run() {
 
         // Show info window on start-up
         if let Err(e) = Command::new("cmd")
-            .args(&["/C", "start", "cmd", "/C", "echo Java 21 has not been found on your system, trying to install it... & pause"])
+            .args(&["/C", "start", "cmd", "/C", "echo Java 21 has not been found on your system, trying to install it... We will notify you once the proccess is completed & pause"])
             .spawn() {
             error!("No se pudo mostrar ventana informativa: {}", e);
         }
@@ -184,7 +184,8 @@ pub async fn run() {
 
                 // Mostrar ventana de error
                 if let Err(e) = Command::new("cmd")
-                    .args(&["/C", "start", "cmd", "/C", "echo Ha ocurrido un error durante la instalación de Java 21. & echo El programa intentará continuar, pero podría no funcionar correctamente. & pause"])
+                    .args(&["/C", "start", "cmd", "/C", "echo An error occurred during the installation of Java 21. & echo The program will try to continue, but it may not work properly. \
+                     Even though it might be an error, try re-launching the app. If the problem persists, contact support & pause"])
                     .spawn() {
                     error!("No se pudo mostrar ventana informativa de error: {}", e);
                 }
