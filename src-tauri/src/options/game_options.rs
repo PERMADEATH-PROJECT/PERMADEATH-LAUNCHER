@@ -2,7 +2,7 @@ use std::fs::{create_dir_all, write};
 use log::{error, info};
 use crate::options::launcher_options::LauncherOptions;
 
-const base_vm_flags: [&str; 10] = [
+const BASE_VM_FLAGS: [&str; 10] = [
     "-XX:MaxGCPauseMillis=100",
     "-XX:G1NewSizePercent=30",
     "-XX:G1ReservePercent=20",
@@ -36,7 +36,7 @@ impl GameOptions {
     pub fn new() -> Self {
         Self {
             max_ram: 4096, // Default to 4096 MB
-            vm_flags: base_vm_flags.iter().map(|s| s.to_string()).collect(),
+            vm_flags: BASE_VM_FLAGS.iter().map(|s| s.to_string()).collect(),
             garbage_collector: GarbageCollector::G1GC,
             custom_java_path: None,
         }
@@ -144,5 +144,15 @@ impl GameOptions {
         }
         info!("Launcher directory is not configured, game options JSON cannot be present.");
         false
+    }
+
+    pub fn get_garbage_collectors() -> Vec<GarbageCollector> {
+        vec![
+            GarbageCollector::Serial,
+            GarbageCollector::Parallel,
+            GarbageCollector::G1GC,
+            GarbageCollector::ZGC,
+            GarbageCollector::Shenandoah,
+        ]
     }
 }

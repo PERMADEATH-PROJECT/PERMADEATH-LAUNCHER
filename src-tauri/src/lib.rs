@@ -5,6 +5,7 @@ use chrono::Local;
 use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
+use crate::options::game_options::GarbageCollector;
 
 /// Configure the logger to log to both console and a file in the logs directory.
 fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Error>> {
@@ -82,6 +83,14 @@ fn read_game_options(launcher_options: LauncherOptions) -> GameOptions {
     game_options
 }
 
+#[tauri::command]
+fn get_garbage_collectors() -> Vec<GarbageCollector> {
+    info!("Retrieving garbage collectors");
+    let collectors = GameOptions::get_garbage_collectors();
+    info!("Garbage collectors retrieved: {:?}", collectors);
+    collectors
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let options = LauncherOptions::new();
@@ -113,7 +122,8 @@ pub fn run() {
             read_options,
             save_options,
             return_default_game_dir,
-            read_game_options
+            read_game_options,
+            get_garbage_collectors
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
