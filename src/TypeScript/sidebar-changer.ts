@@ -26,6 +26,7 @@ import {
 import {game_options, options} from './main.ts';
 import {invoke} from "@tauri-apps/api/core";
 import {JavaVersions} from "./enums/java-versions.ts";
+import {message} from "@tauri-apps/plugin-dialog";
 
 const icons = {
     Skull,
@@ -454,7 +455,7 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
                 <i data-lucide="log-in"></i>
                 Iniciar Sesión
               </button>
-              <a href="#" class="account-link">¿Olvidaste tu contraseña?</a>
+              <a id="create_account" class="account-link">Crear Cuenta</a>
             </form>
           </section>
           <!-- Estado de la Cuenta -->
@@ -504,7 +505,42 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
             </div>
           </section>
         </div>
-      </div>`;
+      </div>
+      <!-- Modal para Crear Cuenta -->
+      <div id="create-account-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Crear Cuenta de PERMADEATHSMP</h2>
+            <button id="close-modal-btn" class="modal-close-btn">&times;</button>
+          </div>
+          <form id="create-account-form" class="modal-body">
+            <p class="modal-warning">
+              Recuerda: solo se permite una cuenta. La muerte es final y el baneo, permanente.
+            </p>
+            <label class="account-label">
+              Usuario de Minecraft
+              <input type="text" id="new-username" class="account-input" placeholder="TuNombreDeUsuario" required />
+            </label>
+            <label class="account-label">
+              Contraseña
+              <input type="password" id="new-password" class="account-input" placeholder="********" required />
+            </label>
+            <label class="account-label">
+              Confirmar Contraseña
+              <input type="password" id="confirm-password" class="account-input" placeholder="********" required />
+            </label>
+            <label class="account-label">
+              Código de Invitación
+              <input type="text" id="invite-code" class="account-input" placeholder="PDSMP-XXXX-XXXX" required />
+            </label>
+            <div class="modal-footer">
+              <button type="button" id="cancel-create-account" class="account-btn account-btn--secondary">Cancelar</button>
+              <button type="submit" class="account-btn account-btn--blue">Crear Cuenta</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      `;
 
 document.getElementById("play")?.addEventListener("click", () => {
     const app = document.getElementById("app");
@@ -691,7 +727,7 @@ document.getElementById("updates")?.addEventListener("click", () => {
     }
 });
 
-document.getElementById("account")?.addEventListener("click", () => {
+document.getElementById("account")?.addEventListener("click", async () => {
     const app = document.getElementById("app");
     const dashboard = document.getElementById("dashboard");
     const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
@@ -707,6 +743,49 @@ document.getElementById("account")?.addEventListener("click", () => {
     if (app) {
         app.insertAdjacentHTML("beforeend", accountDashboard);
         toggleActiveButton("account");
+
+        // --- Lógica del Modal de Crear Cuenta ---
+        const createAccountLink = document.getElementById("create_account");
+        const modal = document.getElementById("create-account-modal");
+        const closeModalBtn = document.getElementById("close-modal-btn");
+        const cancelBtn = document.getElementById("cancel-create-account");
+        const createAccountForm = document.getElementById("create-account-form");
+
+        const showModal = () => modal && (modal.style.display = 'flex');
+        const hideModal = () => modal && (modal.style.display = 'none');
+
+        createAccountLink?.addEventListener('click', (e) => {
+            e.preventDefault(); // Previene que el enlace recargue la página
+            showModal();
+        });
+
+        closeModalBtn?.addEventListener('click', hideModal);
+        cancelBtn?.addEventListener('click', hideModal);
+
+        // Cierra el modal si se hace clic en el fondo oscuro
+        modal?.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                hideModal();
+            }
+        });
+
+        createAccountForm?.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evita que el formulario recargue la página
+            const username = (document.getElementById('new-username') as HTMLInputElement).value;
+            const password = (document.getElementById('new-password') as HTMLInputElement).value;
+            const confirm_password = (document.getElementById('confirm-password') as HTMLInputElement).value;
+            const inviteCode = (document.getElementById('invite-code') as HTMLInputElement).value;
+
+            if (password != confirm_password) {
+                await message('The passwords do not match', { title: 'Account Password Mismatch', kind: 'error'});
+                return;
+            }
+
+            console.log("Datos para crear cuenta:", { username, password, inviteCode });
+
+            hideModal(); // Oculta el modal después de enviar
+        })
+
         // Re-initialize icons
         // @ts-ignore
         if (window.lucide) {

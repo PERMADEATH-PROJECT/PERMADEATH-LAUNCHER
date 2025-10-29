@@ -1,8 +1,7 @@
 // This file is responsible for handling the change game directory button event
 
 import { options } from '../main.ts';
-import { open } from '@tauri-apps/plugin-dialog'
-import { message } from '@tauri-apps/plugin-dialog';
+import { open, message } from '@tauri-apps/plugin-dialog'
 
 document.addEventListener('click', async (e: MouseEvent) => {
     const target = e.target as HTMLElement;

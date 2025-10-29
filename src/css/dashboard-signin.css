@@ -105,7 +105,7 @@
     padding: 10px 16px;
     outline: none;
     font-weight: 500;
-    width: 100%;
+    width: inherit;
     max-width: 500px;
     box-shadow: 0 1px 4px 0 #0001;
     margin-top: 3px;
@@ -157,7 +157,8 @@
     transition: color 0.16s;
 }
 .account-link:hover {
-    color: #a259f7;
+    color: #1b2ca6;
+    cursor: pointer;
 }
 
 .account-status {

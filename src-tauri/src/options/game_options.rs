@@ -29,7 +29,6 @@ pub struct GameOptions {
     max_ram: u32,
     vm_flags: Vec<String>,
     garbage_collector: GarbageCollector,
-    custom_java_path: Option<String>,
 }
 
 impl GameOptions {
@@ -38,7 +37,6 @@ impl GameOptions {
             max_ram: 4096, // Default to 4096 MB
             vm_flags: BASE_VM_FLAGS.iter().map(|s| s.to_string()).collect(),
             garbage_collector: GarbageCollector::G1GC,
-            custom_java_path: None,
         }
     }
 
@@ -70,16 +68,8 @@ impl GameOptions {
         }
     }
 
-    pub fn get_custom_java_path(&self) -> Option<String> {
-        self.custom_java_path.clone()
-    }
-
     pub fn remove_vm_flag(&mut self, flag: &str) {
         self.vm_flags.retain(|f| f != flag);
-    }
-
-    pub fn set_custom_java_path(&mut self, path: Option<String>) {
-        self.custom_java_path = path;
     }
 
     pub fn set_garbage_collector(&mut self, gc: GarbageCollector) {
