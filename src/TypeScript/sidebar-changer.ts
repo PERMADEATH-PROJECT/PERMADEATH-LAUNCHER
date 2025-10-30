@@ -246,7 +246,7 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                             <i data-lucide="Info"></i>
                             <span>
                             <strong>Recomendación</strong><br>
-                            Para PERMADEATHSMP se recomienda mínimo 4GB debido a los mobs modificados y dimensiones transformadas.
+                            Para PERMADEATHSMP se recomienda mínimo 4 GB debido a los mobs modificados y dimensiones transformadas.
                         </span>
                         </div>
                     </div>
@@ -438,18 +438,6 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
                   class="account-input"
                   placeholder="********"
                 />
-              </label>
-              <label class="account-label">
-                Código de Invitación
-                <input
-                  type="text"
-                  class="account-input"
-                  placeholder="PDSMP-XXXX-XXXX"
-                />
-                <span class="account-hint"
-                  >Código proporcionado por <b>Ponchisao326</b> para acceso al
-                  servidor</span
-                >
               </label>
               <button class="account-btn account-btn--blue" type="submit">
                 <i data-lucide="log-in"></i>
@@ -776,6 +764,7 @@ document.getElementById("account")?.addEventListener("click", async () => {
             const confirm_password = (document.getElementById('confirm-password') as HTMLInputElement).value;
             const inviteCode = (document.getElementById('invite-code') as HTMLInputElement).value;
 
+            // Validate the password requirements
             if (password != confirm_password) {
                 await message('The passwords do not match', { title: 'Account Password Mismatch', kind: 'error'});
                 return;
@@ -783,7 +772,7 @@ document.getElementById("account")?.addEventListener("click", async () => {
 
             console.log("Datos para crear cuenta:", { username, password, inviteCode });
 
-            hideModal(); // Oculta el modal después de enviar
+            hideModal(); // Hide the modal after submitting the form
         })
 
         // Re-initialize icons
