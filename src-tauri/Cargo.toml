@@ -39,3 +39,4 @@ launcher-java-installer = { git = "https://github.com/PERMADEATH-PROJECT/launche
 tokio = { version = "1.47.1", features = ["full"] }
 sqlx = { version = "0.8.6", features = [ "runtime-tokio-rustls", "mysql", "chrono" ] }
 dotenvy = "0.15.7"
+bcrypt = "0.17.1"
