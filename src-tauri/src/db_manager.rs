@@ -1,5 +1,5 @@
 use sqlx::{Error, MySqlPool};
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use log::{info, error};
 
 /// Represents a row of the 'users' table

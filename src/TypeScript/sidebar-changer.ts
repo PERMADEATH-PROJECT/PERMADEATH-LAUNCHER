@@ -52,7 +52,12 @@ const icons = {
     AlertCircle
 };
 
-// Change the dashboard and css when clicked on the sidebar
+/*
+ *Change the dashboard and css when clicked on the sidebar
+ *
+ * This should be in different html files as templates, but tauri does not compile it with the project so it should be
+ * hard coded :(
+ */
 const playDashboard = `<div class="dashboard" id="dashboard">
     <div class="dashboard-center-wrapper">
       <div class="alert-warning">
@@ -530,7 +535,22 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
       </div>
       `;
 
-document.getElementById("play")?.addEventListener("click", () => {
+// --- Main Initialization Function ---
+function initializeUI(): void {
+    // Add listeners to the sidebar buttons
+    document.getElementById("play")?.addEventListener("click", () => showDashboard(playDashboard, "play", "/src/css/dashboard.css"));
+    document.getElementById("config")?.addEventListener("click", () => showDashboard(configDashboard, "config", "/src/css/dashboard-config.css", setupConfigListeners));
+    document.getElementById("vm")?.addEventListener("click", () => showDashboard(vmDashboard, "vm", "/src/css/dashboard-vm.css", setupVmListeners));
+    document.getElementById("updates")?.addEventListener("click", () => showDashboard(updateDashboard, "updates", "/src/css/dashboard-update.css", setupUpdatesListeners));
+    document.getElementById("account")?.addEventListener("click", () => showDashboard(accountDashboard, "account", "/src/css/dashboard-signin.css", setupAccountListeners));
+
+    // --- EVENT DELEGATION ---
+    // Listen for 'submit' events on the entire document to handle all forms.
+    document.addEventListener('submit', handleFormSubmissions);
+}
+
+// --- Dashboard Switching Logic ---
+async function showDashboard(innerHTML: string, activeId: string, cssPath: string, setupListeners?: () => void | Promise<void>): Promise<void> {
     const app = document.getElementById("app");
     const dashboard = document.getElementById("dashboard");
     const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
@@ -538,267 +558,155 @@ document.getElementById("play")?.addEventListener("click", () => {
     if (dashboard) {
         dashboard.remove();
     }
-
     if (dashboardCss) {
-        dashboardCss.href = "/src/css/dashboard.css";
+        dashboardCss.href = cssPath;
     }
 
     if (app) {
-        app.insertAdjacentHTML("beforeend", playDashboard);
-        toggleActiveButton("play");
-        // Re-initialize icons
-        // @ts-ignore
-        if (window.lucide) {
-            // @ts-ignore
-            window.lucide.createIcons();
+        app.insertAdjacentHTML("beforeend", innerHTML);
+        toggleActiveButton(activeId);
+        createIcons({ icons });
+
+        // If there's a setup function for this view's specific listeners, call it.
+        if (setupListeners) {
+            await setupListeners();
         }
-        createIcons({ icons: icons });
     }
-});
+}
 
-document.getElementById("config")?.addEventListener("click", () => {
-    const app = document.getElementById("app");
-    const dashboard = document.getElementById("dashboard");
-    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
+// --- Listener Setup Functions for Each View ---
+function setupConfigListeners(): void {
+    const game_dir_input = document.getElementById("game_dir") as HTMLInputElement;
+    (document.getElementById("auto_init") as HTMLInputElement).checked = options.init_on_start;
+    (document.getElementById("debug_console") as HTMLInputElement).checked = options.debug_console;
+    (document.getElementById("automatic_backup") as HTMLInputElement).checked = options.automatic_backup;
 
-    if (dashboard) {
-        dashboard.remove();
+    if (game_dir_input) {
+        console.log('Updating the Game Dir Value: ' + options.game_dir);
+        game_dir_input.value = options.game_dir || "%APPDATA%/.Permadeath";
+    }
+}
+
+async function setupVmListeners(): Promise<void> {
+    const max_ram = document.getElementById("max_ram") as HTMLInputElement;
+    const gc_select = document.getElementById("gc_select") as HTMLSelectElement;
+    const java_version = document.getElementById("java_version") as HTMLSelectElement;
+    const vm_args = document.getElementById("jvm_args") as HTMLInputElement;
+
+    if (max_ram) {
+        max_ram.value = game_options.max_ram ? `${game_options.max_ram}MB` : '4096MB';
     }
 
-    if (dashboardCss) {
-        dashboardCss.href = "/src/css/dashboard-config.css";
-    }
-
-    if (app) {
-        app.insertAdjacentHTML("beforeend", configDashboard);
-        toggleActiveButton("config");
-
-        // Obtener el input y el botón después de insertar el HTML
-        const game_dir_input = document.getElementById("game_dir") as HTMLInputElement;
-
-        // Modificar los valores de los checkboxes según options
-        (document.getElementById("auto_init") as HTMLInputElement).checked = options.init_on_start;
-        (document.getElementById("debug_console") as HTMLInputElement).checked = options.debug_console;
-        (document.getElementById("automatic_backup") as HTMLInputElement).checked = options.automatic_backup;
-
-        // Actualizar el campo de directorio del juego
-        if (game_dir_input) {
-            console.log('Updating the Game Dir Value: ' + options.game_dir);
-            game_dir_input.value = options.game_dir || "%APPDATA%/.Permadeath";
+    if (gc_select) {
+        const gc_options = await invoke<string[]>('get_garbage_collectors');
+        gc_options.forEach((gc) => {
+            const option = document.createElement("option");
+            option.value = gc;
+            option.text = gc;
+            gc_select.appendChild(option);
+        });
+        if (game_options.garbage_collector) {
+            gc_select.value = game_options.garbage_collector;
         }
-
-        // @ts-ignore
-        if (window.lucide) {
-            // @ts-ignore
-            window.lucide.createIcons();
-        }
-        createIcons({ icons: icons });
-    }
-});
-
-document.getElementById("vm")?.addEventListener("click", async () => {
-    const app = document.getElementById("app");
-    const dashboard = document.getElementById("dashboard");
-    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
-
-    if (dashboard) {
-        dashboard.remove();
     }
 
-    if (dashboardCss) {
-        dashboardCss.href = "/src/css/dashboard-vm.css";
-    }
-
-    if (app) {
-        app.insertAdjacentHTML("beforeend", vmDashboard);
-        toggleActiveButton("vm");
-        const max_ram = document.getElementById("max_ram") as HTMLInputElement;
-        const gc_select = document.getElementById("gc_select") as HTMLSelectElement;
-        const java_version = document.getElementById("java_version") as HTMLSelectElement;
-        const vm_args = document.getElementById("jvm_args") as HTMLInputElement;
-
-        if (max_ram) {
-            console.log("Loading Max RAM: " + game_options.max_ram);
-            max_ram.value = game_options.max_ram ? game_options.max_ram + 'MB' : '4096MB';
-        }
-
-        if (gc_select) {
-            // Load GC options from Rust
-            console.log("Fetching GC Options from backend...");
-            const gc_options = await invoke<string[]>('get_garbage_collectors');
-            console.log("Loading GC Options: " + gc_options);
-            gc_options.forEach((gc) => {
-                const option = document.createElement("option");
-                option.value = gc;
-                option.text = gc;
-                gc_select.appendChild(option);
-            })
-            // Select the current GC
-            if (game_options.garbage_collector) {
-                console.log("Selecting current GC: " + game_options.garbage_collector);
-                gc_select.value = game_options.garbage_collector;
+    if (java_version) {
+        Object.values(JavaVersions).forEach((version) => {
+            const option = document.createElement("option");
+            option.value = version;
+            option.text = version;
+            if (game_options.custom_java_path?.includes(version.split(' ')[1])) {
+                option.selected = true;
             }
-        }
-
-        if (java_version) {
-            console.log("Loading Java Version: " + game_options.custom_java_path);
-            JavaVersions && Object.values(JavaVersions).forEach((version) => {
-                const option = document.createElement("option");
-                option.value = version;
-                option.text = version;
-                if (game_options.custom_java_path && game_options.custom_java_path.includes(version.split(' ')[1])) {
-                    option.selected = true;
-                }
-                java_version.appendChild(option);
-            });
-        }
-
-        if (vm_args) {
-            console.log("Loading JVM Args: " + game_options.vm_flags?.join(' '));
-            vm_args.value = game_options.vm_flags?.join(' ') || '';
-        }
-
-        // Re-initialize icons
-        // @ts-ignore
-        if (window.lucide) {
-            // @ts-ignore
-            window.lucide.createIcons();
-        }
-        createIcons({ icons: icons });
-    }
-});
-
-document.getElementById("updates")?.addEventListener("click", () => {
-    const app = document.getElementById("app");
-    const dashboard = document.getElementById("dashboard");
-    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
-
-    if (dashboard) {
-        dashboard.remove();
+            java_version.appendChild(option);
+        });
     }
 
-    if (dashboardCss) {
-        dashboardCss.href = "/src/css/dashboard-update.css";
+    if (vm_args) {
+        vm_args.value = game_options.vm_flags?.join(' ') || '';
     }
+}
 
-    if (app) {
-        app.insertAdjacentHTML("beforeend", updateDashboard);
-        toggleActiveButton("updates");
-        const auto_update_btn = document.getElementById("auto_update_btn");
-        const notifications_btn = document.getElementById("notifications_btn");
+function setupUpdatesListeners(): void {
+    const auto_update_btn = document.getElementById("auto_update_btn");
+    const notifications_btn = document.getElementById("notifications_btn");
 
-        if (auto_update_btn) {
-            console.log("Auto Update is: " + options.auto_update);
-            if (options.auto_update) {
-                auto_update_btn.classList.add("updates-btn--green");
-                auto_update_btn.classList.remove("updates-btn--white");
-                auto_update_btn.textContent = "Habilitado";
-            }
+    if (auto_update_btn) {
+        if (options.auto_update) {
+            auto_update_btn.classList.add("updates-btn--green");
+            auto_update_btn.classList.remove("updates-btn--white");
+            auto_update_btn.textContent = "Enabled";
         }
+    }
 
-        if (notifications_btn) {
-            console.log("Notifications are: " + options.notification_enabled);
-            if (options.notification_enabled) {
-                notifications_btn.classList.add("updates-btn--green");
-                notifications_btn.classList.remove("updates-btn--white");
-                notifications_btn.textContent = "Habilitado";
-            }
+    if (notifications_btn) {
+        if (options.notification_enabled) {
+            notifications_btn.classList.add("updates-btn--green");
+            notifications_btn.classList.remove("updates-btn--white");
+            notifications_btn.textContent = "Enabled";
         }
-
-        // Re-initialize icons
-        // @ts-ignore
-        if (window.lucide) {
-            // @ts-ignore
-            window.lucide.createIcons();
-        }
-        createIcons({ icons: icons });
     }
-});
+}
 
-document.getElementById("account")?.addEventListener("click", async () => {
-    const app = document.getElementById("app");
-    const dashboard = document.getElementById("dashboard");
-    const dashboardCss = document.querySelector('link[href*="dashboard"]') as HTMLLinkElement;
+function setupAccountListeners(): void {
+    // This function now only handles the modal's logic (open/close).
+    const createAccountLink = document.getElementById("create_account");
+    const modal = document.getElementById("create-account-modal");
+    const closeModalBtn = document.getElementById("close-modal-btn");
+    const cancelBtn = document.getElementById("cancel-create-account");
 
-    if (dashboard) {
-        dashboard.remove();
-    }
+    const showModal = () => modal && (modal.style.display = 'flex');
+    const hideModal = () => modal && (modal.style.display = 'none');
 
-    if (dashboardCss) {
-        dashboardCss.href = "/src/css/dashboard-signin.css";
-    }
+    createAccountLink?.addEventListener('click', (e) => {
+        e.preventDefault();
+        showModal();
+    });
 
-    if (app) {
-        app.insertAdjacentHTML("beforeend", accountDashboard);
-        toggleActiveButton("account");
+    closeModalBtn?.addEventListener('click', hideModal);
+    cancelBtn?.addEventListener('click', hideModal);
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) hideModal();
+    });
+}
 
-        // --- Lógica del Modal de Crear Cuenta ---
-        const createAccountLink = document.getElementById("create_account");
+// --- Central Form Handler (using event delegation) ---
+async function handleFormSubmissions(e: SubmitEvent): Promise<void> {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+
+    // Identify the registration form by its ID
+    if (form.id === 'create-account-form') {
+        console.log("Handling create account form submission...");
+        const username = (form.querySelector('#new-username') as HTMLInputElement).value;
+        const password = (form.querySelector('#new-password') as HTMLInputElement).value;
+        const confirm_password = (form.querySelector('#confirm-password') as HTMLInputElement).value;
+        const inviteCode = (form.querySelector('#invite-code') as HTMLInputElement).value;
         const modal = document.getElementById("create-account-modal");
-        const closeModalBtn = document.getElementById("close-modal-btn");
-        const cancelBtn = document.getElementById("cancel-create-account");
-        const createAccountForm = document.getElementById("create-account-form");
 
-        const showModal = () => modal && (modal.style.display = 'flex');
-        const hideModal = () => modal && (modal.style.display = 'none');
-
-        createAccountLink?.addEventListener('click', (e) => {
-            e.preventDefault(); // Previene que el enlace recargue la página
-            showModal();
-        });
-
-        closeModalBtn?.addEventListener('click', hideModal);
-        cancelBtn?.addEventListener('click', hideModal);
-
-        // Cierra el modal si se hace clic en el fondo oscuro
-        modal?.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                hideModal();
-            }
-        });
-
-        createAccountForm?.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Evita que el formulario recargue la página
-            const username = (document.getElementById('new-username') as HTMLInputElement).value;
-            const password = (document.getElementById('new-password') as HTMLInputElement).value;
-            const confirm_password = (document.getElementById('confirm-password') as HTMLInputElement).value;
-            const inviteCode = (document.getElementById('invite-code') as HTMLInputElement).value;
-
-            // Validate the password requirements
-            if (password != confirm_password) {
-                await message('The passwords do not match', { title: 'Account Password Mismatch', kind: 'error'});
-                return;
-            }
-
-            try {
-                const successMessage = await invoke('register_user', {
-                    username: username,
-                    password: password,
-                    inviteCode: inviteCode
-                });
-                console.log('Registration successful:', successMessage);
-
-                alert(successMessage);
-            } catch (err: unknown) {
-                const errorMessage = err instanceof Error ? err.message : String(err);
-                console.error('Registration failed:', errorMessage);
-                await message(errorMessage, { title: 'Error', kind: 'error'});
-            }
-
-            hideModal(); // Hide the modal after submitting the form
-        })
-
-        // Re-initialize icons
-        // @ts-ignore
-        if (window.lucide) {
-            // @ts-ignore
-            window.lucide.createIcons();
+        if (password !== confirm_password) {
+            await message('Passwords do not match', { title: 'Password Error', kind: 'error' });
+            return;
         }
-        createIcons({ icons: icons });
-    }
-});
 
-// Remove the "sidebar__btn--primary" class from all sidebar buttons except the clicked one
+        try {
+            const successMessage = await invoke<string>('register_user', { username, password, inviteCode });
+            console.log('Registration successful:', successMessage);
+            await message(successMessage, { title: 'Account Created', kind: 'info' });
+            if (modal) modal.style.display = 'none'; // Close the modal
+
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            console.error('Registration failed:', errorMessage);
+            await message(errorMessage, { title: 'Registration Error', kind: 'error' });
+        }
+    }
+
+    // You could add more `else if` blocks here for other forms
+    // else if (form.id === 'login-form') { ... }
+}
+
+// --- Sidebar Utility Function ---
 function toggleActiveButton(clickedButtonId: string): void {
     const buttons = document.querySelectorAll('.sidebar__btn');
     buttons.forEach(button => {
@@ -809,3 +717,7 @@ function toggleActiveButton(clickedButtonId: string): void {
         }
     });
 }
+
+// --- START EVERYTHING ---
+// Ensures the DOM is fully loaded before adding listeners.
+document.addEventListener('DOMContentLoaded', initializeUI);
