@@ -8,6 +8,7 @@ use log::{info, error};
 pub struct User {
     pub id: i32,
     pub minecraft_username: String,
+    pub password_hash: String,
 }
 
 /// Main SQL Manager
@@ -28,7 +29,7 @@ impl DbManager {
     /// Search a user by their minecraft username.
     pub async fn get_user_by_username(&self, username: &str) -> Result<Option<User>, Error> {
         info!("Buscando usuario por nombre: '{}'", username);
-        sqlx::query_as::<_, User>("SELECT id, minecraft_username FROM users WHERE minecraft_username = ?")
+        sqlx::query_as::<_, User>("SELECT id, minecraft_username, password_hash FROM users WHERE minecraft_username = ?")
             .bind(username)
             .fetch_optional(&self.pool)
             .await

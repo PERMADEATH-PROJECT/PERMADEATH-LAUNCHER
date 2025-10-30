@@ -114,17 +114,20 @@ fn save_game_options(game_options: GameOptions, launcher_options: LauncherOption
 #[tauri::command]
 async fn login_user(
     username: String,
-    // password: String, // Recibirías la contraseña del frontend
-    db: tauri::State<'_, DbManager> // <-- Acceso al estado gestionado de la BD
+    password: String,
+    db: tauri::State<'_, DbManager>
 ) -> Result<bool, String> {
     info!("Intentando autenticar al usuario: {}", username);
     match db.get_user_by_username(&username).await {
         Ok(Some(user)) => {
-            // Aquí compararías el hash de la contraseña
-            // let password_matches = bcrypt::verify(password, &user.password_hash).unwrap_or(false);
-            // if password_matches { ... }
-            info!("Usuario '{}' encontrado con ID: {}", user.minecraft_username, user.id);
-            Ok(true) // Simulación de login exitoso
+            let password_matches = bcrypt::verify(password, &user.password_hash).unwrap_or(false);
+            if password_matches {
+                info!("Usuario '{}' encontrado con ID: {}", user.minecraft_username, user.id);
+                Ok(true) // Correcto: la función termina aquí
+            } else {
+                info!("Contraseña incorrecta para el usuario '{}'", username);
+                Ok(false) // Correcto: se devuelve si la contraseña no coincide
+            }
         },
         Ok(None) => {
             info!("Usuario '{}' no encontrado.", username);
@@ -132,7 +135,7 @@ async fn login_user(
         },
         Err(e) => {
             error!("Error de base de datos durante el login: {}", e);
-            Err("Error interno del servidor.".to_string())
+            Err("Usuario o contraseña incorrectos.".to_string())
         }
     }
 }
