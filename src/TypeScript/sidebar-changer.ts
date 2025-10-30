@@ -770,7 +770,20 @@ document.getElementById("account")?.addEventListener("click", async () => {
                 return;
             }
 
-            console.log("Datos para crear cuenta:", { username, password, inviteCode });
+            try {
+                const successMessage = await invoke('register_user', {
+                    username: username,
+                    password: password,
+                    inviteCode: inviteCode
+                });
+                console.log('Registration successful:', successMessage);
+
+                alert(successMessage);
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : String(err);
+                console.error('Registration failed:', errorMessage);
+                await message(errorMessage, { title: 'Error', kind: 'error'});
+            }
 
             hideModal(); // Hide the modal after submitting the form
         })

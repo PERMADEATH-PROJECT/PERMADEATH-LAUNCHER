@@ -290,6 +290,7 @@ pub async fn run() {
             .plugin(tauri_plugin_dialog::init())
             .plugin(tauri_plugin_process::init())
             .plugin(tauri_plugin_opener::init())
+            .manage(db_manager)
             .invoke_handler(tauri::generate_handler![
             read_options,
             save_options,
