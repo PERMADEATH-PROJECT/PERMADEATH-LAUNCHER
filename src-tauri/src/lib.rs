@@ -1,4 +1,5 @@
 mod options;
+mod db_manager;
 
 use options::{launcher_options::LauncherOptions, game_options::GameOptions};
 use chrono::Local;
@@ -7,6 +8,7 @@ use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, C
 use std::fs::{File, create_dir_all};
 use std::process::Command;
 use launcher_java_installer::JavaSetup;
+use crate::db_manager::DbManager;
 use crate::options::game_options::{GarbageCollector, BASE_VM_FLAGS};
 
 /// Configure the logger to log to both console and a file in the logs directory.
@@ -109,6 +111,32 @@ fn save_game_options(game_options: GameOptions, launcher_options: LauncherOption
     true
 }
 
+#[tauri::command]
+async fn login_user(
+    username: String,
+    // password: String, // Recibirías la contraseña del frontend
+    db: tauri::State<'_, DbManager> // <-- Acceso al estado gestionado de la BD
+) -> Result<bool, String> {
+    info!("Intentando autenticar al usuario: {}", username);
+    match db.get_user_by_username(&username).await {
+        Ok(Some(user)) => {
+            // Aquí compararías el hash de la contraseña
+            // let password_matches = bcrypt::verify(password, &user.password_hash).unwrap_or(false);
+            // if password_matches { ... }
+            info!("Usuario '{}' encontrado con ID: {}", user.minecraft_username, user.id);
+            Ok(true) // Simulación de login exitoso
+        },
+        Ok(None) => {
+            info!("Usuario '{}' no encontrado.", username);
+            Err("Usuario o contraseña incorrectos.".to_string())
+        },
+        Err(e) => {
+            error!("Error de base de datos durante el login: {}", e);
+            Err("Error interno del servidor.".to_string())
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
@@ -131,6 +159,19 @@ pub async fn run() {
         info!("Game Options file not found, creating a new one with default settings");
         game_options.save(options.clone());
     }
+
+    // --- DATABASE CONNECTION ---
+    dotenvy::dotenv().ok();
+    let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be defined .env");
+
+    let db_manager = match DbManager::new(&db_url).await {
+        Ok(manager) => manager,
+        Err(e) => {
+            error!("We couldn't stablish connection to the database: {}", e);
+            return;
+        }
+    };
+    info!("Conexión a la base de datos establecida con éxito.");
 
     let mut java_installed = check_java_version("21");
     info!("Is Java 21 installed? {}", java_installed);
