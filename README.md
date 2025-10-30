@@ -25,7 +25,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ### Back-end (To do)
 
-#### To be implemented in the launcher (All to do)
+#### To be implemented in the launcher
 - [ ] Server connection (Status, online players, stats, current day, etc)
 - [ ] Update control
 - [x] Apply config changes to the application
@@ -62,7 +62,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
     - [x] ZIP compression: Optionally compress backups into a single ZIP file, including the backup metadata.
     - [x] Easy integration: Designed for Rust-based Minecraft launchers or any application needing robust backup functionality.
 
-- **[Java Installation Handler]() (All to do):**
+- **[Java Installation Handler]() (Fully done):**
     - [x] Detect existing Java installations, automatically identifying version numbers, bin paths, and status flags.
     - [x] (Possibly) Apply Java updates automatically, automatically replacing each installed version with a newer release.
     - [x] Prompt users before using a local version, rather than running it by default, unless otherwise specified.
