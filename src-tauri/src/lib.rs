@@ -140,6 +140,53 @@ async fn login_user(
     }
 }
 
+#[tauri::command]
+async fn register_user(
+    username: String,
+    password: String,
+    invite_code: String,
+    db: tauri::State<'_, DbManager>
+) -> Result<String, String> {
+    info!("Iniciando proceso de registro para el usuario: '{}'", username);
+
+    // --- Input Validation ---
+    if username.len() < 3 || username.len() > 16 {
+        return Err("El nombre de usuario debe tener entre 3 y 16 caracteres.".to_string());
+    }
+    if password.len() < 8 {
+        return Err("La contraseña debe tener al menos 8 caracteres.".to_string());
+    }
+
+    // --- Password Hashing ---
+    // Move the hashing to another thread due to the complex CPU task it is
+    let password_hash = match tokio::task::spawn_blocking(move || {
+        bcrypt::hash(password, bcrypt::DEFAULT_COST)
+    }).await {
+        Ok(Ok(hash)) => hash,
+        _ => {
+            error!("Fallo en el hashing de la contraseña para el usuario '{}'", username);
+            return Err("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.".to_string());
+        }
+    };
+
+    // --- DB Call ---
+    match db.create_user_with_invite(&username, &password_hash, &invite_code).await {
+        Ok(new_id) => {
+            let success_message = format!("¡Usuario '{}' registrado con éxito con el ID {}!", username, new_id);
+            info!("{}", success_message);
+            Ok(success_message)
+        },
+        Err(sqlx::Error::RowNotFound) => {
+            // Invitation code not valid
+            Err("El código de invitación no es válido o ya ha sido utilizado.".to_string())
+        },
+        Err(e) => {
+            error!("Error de base de datos durante el registro de '{}': {}", username, e);
+            Err("Ocurrió un error al registrar la cuenta. Por favor, contacta con soporte.".to_string())
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
@@ -250,7 +297,9 @@ pub async fn run() {
             read_game_options,
             get_garbage_collectors,
             get_base_jvm_flags,
-            save_game_options
+            save_game_options,
+            login_user,
+            register_user
         ])
             .run(tauri::generate_context!())
             .expect("error while running tauri application");
