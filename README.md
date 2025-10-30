@@ -29,9 +29,9 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 - [ ] Server connection (Status, online players, stats, current day, etc)
 - [ ] Update control
 - [x] Apply config changes to the application
-- [ ] Apply Java VM changes to the application
-- [ ] Implement log-in with launcher account
-- [ ] Implement log-out with launcher account
+- [*] Apply Java VM changes to the application
+- [*] Implement log-in with launcher account
+- [*] Implement log-out with launcher account
 
 #### Libraries and Tools
 
@@ -63,11 +63,11 @@ This project is a modern, highly customizable launcher for SMP servers with perm
     - [x] Easy integration: Designed for Rust-based Minecraft launchers or any application needing robust backup functionality.
 
 - **[Java Installation Handler]() (All to do):**
-    - [ ] Detect existing Java installations, automatically identifying version numbers, bin paths, and status flags.
-    - [ ] (Possibly) Apply Java updates automatically, automatically replacing each installed version with a newer release.
-    - [ ] Prompt users before using a local version, rather than running it by default, unless otherwise specified.
-    - [ ] Apply the selected version’s Java command line options, making those profiles available in a drop down list.
-    - [ ] Download and install Java versions from the official Oracle website based on the requested version.
+    - [*] Detect existing Java installations, automatically identifying version numbers, bin paths, and status flags.
+    - [*] (Possibly) Apply Java updates automatically, automatically replacing each installed version with a newer release.
+    - [*] Prompt users before using a local version, rather than running it by default, unless otherwise specified.
+    - [*] Apply the selected version’s Java command line options, making those profiles available in a drop down list.
+    - [*] Download and install Java versions from the official Oracle website based on the requested version.
 
 ---
 
