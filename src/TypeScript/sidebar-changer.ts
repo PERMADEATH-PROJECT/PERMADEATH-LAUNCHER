@@ -427,13 +427,15 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
               Solo se permite una cuenta por jugador en PERMADEATHSMP. La muerte
               es permanente e irreversible.
             </div>
-            <form class="account-form">
+            <form id="login-form" class="account-form">
               <label class="account-label">
                 Usuario de Minecraft
                 <input
                   type="text"
                   class="account-input"
                   placeholder="TuNombreDeUsuario"
+                  id="username"
+                  required
                 />
               </label>
               <label class="account-label">
@@ -442,6 +444,8 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
                   type="password"
                   class="account-input"
                   placeholder="********"
+                  id="password"
+                  required
                 />
               </label>
               <button class="account-btn account-btn--blue" type="submit">
@@ -506,7 +510,7 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
             <h2>Crear Cuenta de PERMADEATHSMP</h2>
             <button id="close-modal-btn" class="modal-close-btn">&times;</button>
           </div>
-          <form id="create-account-form" class="modal-body">
+                  <form id="create-account-form" class="modal-body">
             <p class="modal-warning">
               Recuerda: solo se permite una cuenta. La muerte es final y el baneo, permanente.
             </p>
@@ -700,10 +704,26 @@ async function handleFormSubmissions(e: SubmitEvent): Promise<void> {
             console.error('Registration failed:', errorMessage);
             await message(errorMessage, { title: 'Registration Error', kind: 'error' });
         }
-    }
+    } else if (form.id === 'login-form') {
+        console.log("Handling login form submission...");
+        const username = (form.querySelector('#username') as HTMLInputElement).value;
+        const password = (form.querySelector('#password') as HTMLInputElement).value;
 
-    // You could add more `else if` blocks here for other forms
-    // else if (form.id === 'login-form') { ... }
+        try {
+            const successMessage = await invoke<boolean>('login_user', { username, password });
+            console.log('Login successful:', successMessage);
+
+            if (successMessage) {
+                await message('Login Successful', {title: 'LogIn Successful', kind: 'info'});
+                return;
+            }
+            await message('Login Failed', {title: 'LogIn Failed', kind: 'error'});
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            console.error('Registration failed:', errorMessage);
+            await message(errorMessage, { title: 'Registration Error', kind: 'error' });
+        }
+    }
 }
 
 // --- Sidebar Utility Function ---
