@@ -117,25 +117,52 @@ async fn login_user(
     password: String,
     db: tauri::State<'_, DbManager>
 ) -> Result<bool, String> {
+    // --- Input Validation ---
+    if username.is_empty() || username.len() > 16 {
+        error!("Login attempt with invalid username length");
+        return Err("Credenciales inválidas.".to_string());
+    }
+
+    if password.is_empty() || password.len() > 128 {
+        error!("Login attempt with invalid password length");
+        return Err("Credenciales inválidas.".to_string());
+    }
+
+    // Validate allowed characters in username (alphanumeric and underscore)
+    if !username.chars().all(|c| c.is_alphanumeric() || c == '_') {
+        error!("Login attempt with invalid characters in username");
+        return Err("Credenciales inválidas.".to_string());
+    }
+
     info!("Intentando autenticar al usuario: {}", username);
+
     match db.get_user_by_username(&username).await {
         Ok(Some(user)) => {
-            let password_matches = bcrypt::verify(password, &user.password_hash).unwrap_or(false);
-            if password_matches {
-                info!("Usuario '{}' encontrado con ID: {}", user.minecraft_username, user.id);
-                Ok(true) // Correcto: la función termina aquí
-            } else {
-                info!("Contraseña incorrecta para el usuario '{}'", username);
-                Ok(false) // Correcto: se devuelve si la contraseña no coincide
+            // Safe bcrypt error handling
+            match bcrypt::verify(password, &user.password_hash) {
+                Ok(true) => {
+                    info!("Successful authentication for user '{}'", username);
+                    Ok(true)
+                },
+                Ok(false) => {
+                    info!("Incorrect password for user '{}'", username);
+                    // Generic message to prevent user enumeration
+                    Err("Credenciales inválidas.".to_string())
+                },
+                Err(e) => {
+                    error!("Error verifying password for '{}': {}", username, e);
+                    Err("Credenciales inválidas.".to_string())
+                }
             }
         },
         Ok(None) => {
             info!("Usuario '{}' no encontrado.", username);
-            Err("Usuario o contraseña incorrectos.".to_string())
+            // Generic message to prevent user enumeration
+            Err("Credenciales inválidas.".to_string())
         },
         Err(e) => {
             error!("Error de base de datos durante el login: {}", e);
-            Err("Usuario o contraseña incorrectos.".to_string())
+            Err("Credenciales inválidas.".to_string())
         }
     }
 }
@@ -153,8 +180,24 @@ async fn register_user(
     if username.len() < 3 || username.len() > 16 {
         return Err("El nombre de usuario debe tener entre 3 y 16 caracteres.".to_string());
     }
+
+    // Validate allowed characters in username
+    if !username.chars().all(|c| c.is_alphanumeric() || c == '_') {
+        return Err("El nombre de usuario solo puede contener letras, números y guiones bajos.".to_string());
+    }
+
     if password.len() < 8 {
         return Err("La contraseña debe tener al menos 8 caracteres.".to_string());
+    }
+
+    // Validate maximum password length
+    if password.len() > 128 {
+        return Err("La contraseña no puede tener más de 128 caracteres.".to_string());
+    }
+
+    // Validate invitation code
+    if invite_code.is_empty() || invite_code.len() > 64 {
+        return Err("Código de invitación inválido.".to_string());
     }
 
     // --- Password Hashing ---
@@ -163,8 +206,12 @@ async fn register_user(
         bcrypt::hash(password, bcrypt::DEFAULT_COST)
     }).await {
         Ok(Ok(hash)) => hash,
-        _ => {
-            error!("Fallo en el hashing de la contraseña para el usuario '{}'", username);
+        Ok(Err(e)) => {
+            error!("Password hashing error for user '{}': {}", username, e);
+            return Err("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.".to_string());
+        }
+        Err(e) => {
+            error!("Hashing task failed for user '{}': {}", username, e);
             return Err("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.".to_string());
         }
     };
