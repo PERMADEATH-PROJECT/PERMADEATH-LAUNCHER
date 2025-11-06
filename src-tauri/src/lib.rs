@@ -276,6 +276,11 @@ async fn logout(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<(), Stri
         Ok(())
     }
 }
+
+/**
+ * Keyring is generating and storing the session tokens securely in the Database but not in the system keyring.
+ * This is done because is failing XD. Have to re-check later.
+ */
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
