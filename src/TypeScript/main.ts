@@ -1,6 +1,7 @@
 import "../css-imports.ts"
 import { invoke } from "@tauri-apps/api/core";
 import { exit } from '@tauri-apps/plugin-process';
+import {checkAutoLogin} from "./auto-login.ts";
 
 let options: LauncherOptions;
 let game_options: GameOptions;
@@ -53,6 +54,12 @@ window.addEventListener("DOMContentLoaded", async () => {
             console.error("Failed to load game options.");
             await exit(0);
         }
+
+        checkAutoLogin().then(isLoggedIn => {
+            if (isLoggedIn) {
+                console.log("User is already logged in.");
+            }
+        });
     } catch (error) {
         console.error("Error loading options:", error);
         await exit(1);
