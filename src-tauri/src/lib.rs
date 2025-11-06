@@ -1,5 +1,6 @@
 mod options;
 mod db_manager;
+mod session_manager;
 
 use options::{launcher_options::LauncherOptions, game_options::GameOptions};
 use chrono::Local;
@@ -7,6 +8,7 @@ use log::{info, error, LevelFilter};
 use simplelog::{WriteLogger, Config, CombinedLogger, TermLogger, TerminalMode, ColorChoice};
 use std::fs::{File, create_dir_all};
 use std::process::Command;
+use std::sync::Arc;
 use launcher_java_installer::JavaSetup;
 use crate::db_manager::DbManager;
 use crate::options::game_options::{GarbageCollector, BASE_VM_FLAGS};
@@ -115,8 +117,9 @@ fn save_game_options(game_options: GameOptions, launcher_options: LauncherOption
 async fn login_user(
     username: String,
     password: String,
-    db: tauri::State<'_, DbManager>
-) -> Result<bool, String> {
+    db: tauri::State<'_, DbManager>,
+    pool: tauri::State<'_, Arc<sqlx::MySqlPool>>
+) -> Result<String, String> {
     // --- Input Validation ---
     if username.is_empty() || username.len() > 16 {
         error!("Login attempt with invalid username length");
@@ -138,15 +141,23 @@ async fn login_user(
 
     match db.get_user_by_username(&username).await {
         Ok(Some(user)) => {
-            // Safe bcrypt error handling
             match bcrypt::verify(password, &user.password_hash) {
                 Ok(true) => {
-                    info!("Successful authentication for user '{}'", username);
-                    Ok(true)
+                    // Crear sesión
+                    let session_manager = session_manager::SessionManager::new(pool.inner().as_ref().clone());
+                    match session_manager.create_session(user.id).await {
+                        Ok(token) => {
+                            info!("Login exitoso para '{}', token creado", username);
+                            Ok(token)
+                        }
+                        Err(e) => {
+                            error!("Error creando sesión para '{}': {}", username, e);
+                            Err("Error al crear sesión.".to_string())
+                        }
+                    }
                 },
                 Ok(false) => {
                     info!("Incorrect password for user '{}'", username);
-                    // Generic message to prevent user enumeration
                     Err("Credenciales inválidas.".to_string())
                 },
                 Err(e) => {
@@ -157,7 +168,6 @@ async fn login_user(
         },
         Ok(None) => {
             info!("Usuario '{}' no encontrado.", username);
-            // Generic message to prevent user enumeration
             Err("Credenciales inválidas.".to_string())
         },
         Err(e) => {
@@ -234,6 +244,38 @@ async fn register_user(
     }
 }
 
+#[tauri::command]
+async fn check_session(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<Option<i32>, String> {
+    match session_manager::SessionManager::get_token_from_keyring() {
+        Ok(Some(token)) => {
+            let session_manager = session_manager::SessionManager::new(pool.inner().as_ref().clone());
+            session_manager.validate_token(&token)
+                .await
+                .map_err(|e| format!("Error validando sesión: {}", e))
+        }
+        Ok(None) => {
+            info!("No hay token guardado en el keyring");
+            Ok(None)
+        }
+        Err(e) => {
+            error!("Error leyendo token del keyring: {}", e);
+            Ok(None)
+        }
+    }
+}
+
+#[tauri::command]
+async fn logout(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<(), String> {
+    if let Ok(Some(token)) = session_manager::SessionManager::get_token_from_keyring() {
+        let session_manager = session_manager::SessionManager::new(pool.inner().as_ref().clone());
+        session_manager.delete_session(&token)
+            .await
+            .map_err(|e| format!("Error cerrando sesión: {}", e))
+    } else {
+        info!("No hay sesión activa para cerrar");
+        Ok(())
+    }
+}
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
@@ -264,10 +306,20 @@ pub async fn run() {
     let db_manager = match DbManager::new(&db_url).await {
         Ok(manager) => manager,
         Err(e) => {
-            error!("We couldn't stablish connection to the database: {}", e);
+            error!("We couldn't establish connection to the database: {}", e);
             return;
         }
     };
+
+    // Crear pool adicional para gestión de sesiones
+    let pool = match sqlx::MySqlPool::connect(&db_url).await {
+        Ok(p) => Arc::new(p),  // Envolver en Arc
+        Err(e) => {
+            error!("Error while creating the connection pool: {}", e);
+            return;
+        }
+    };
+
     info!("Conexión a la base de datos establecida con éxito.");
 
     let mut java_installed = check_java_version("21");
@@ -338,6 +390,7 @@ pub async fn run() {
             .plugin(tauri_plugin_process::init())
             .plugin(tauri_plugin_opener::init())
             .manage(db_manager)
+            .manage(pool)
             .invoke_handler(tauri::generate_handler![
             read_options,
             save_options,
@@ -347,7 +400,9 @@ pub async fn run() {
             get_base_jvm_flags,
             save_game_options,
             login_user,
-            register_user
+            register_user,
+            check_session,
+            logout
         ])
             .run(tauri::generate_context!())
             .expect("error while running tauri application");
