@@ -299,10 +299,6 @@ async fn load_user_data(
         .map_err(|e| format!("Error cargando datos del usuario: {}", e))
 }
 
-/**
- * Keyring is generating and storing the session tokens securely in the Database but not in the system keyring.
- * This is done because is failing XD. Have to re-check later.
- */
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 #[tokio::main]
 pub async fn run() {
