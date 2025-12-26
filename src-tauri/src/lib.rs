@@ -13,6 +13,12 @@ use launcher_java_installer::JavaSetup;
 use crate::db_manager::DbManager;
 use crate::options::game_options::{GarbageCollector, BASE_VM_FLAGS};
 
+#[derive(serde::Serialize)]
+struct SessionInfo {
+    user_id: i32,
+    username: String,
+}
+
 /// Configure the logger to log to both console and a file in the logs directory.
 fn setup_logger(options: &LauncherOptions) -> Result<(), Box<dyn std::error::Error>> {
     if let Some(dir) = &options.launcher_dir {
@@ -245,13 +251,19 @@ async fn register_user(
 }
 
 #[tauri::command]
-async fn check_session(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<Option<i32>, String> {
+async fn check_session(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<Option<SessionInfo>, String> {
     match session_manager::SessionManager::get_token_from_keyring() {
         Ok(Some(token)) => {
             let session_manager = session_manager::SessionManager::new(pool.inner().as_ref().clone());
-            session_manager.validate_token(&token)
-                .await
-                .map_err(|e| format!("Error validando sesión: {}", e))
+
+            match session_manager.validate_token(&token).await {
+                Ok(Some((user_id, username))) => {
+                    // Devolvemos la estructura completa
+                    Ok(Some(SessionInfo { user_id, username }))
+                },
+                Ok(None) => Ok(None),
+                Err(e) => Err(format!("Error validando sesión: {}", e))
+            }
         }
         Ok(None) => {
             info!("No hay token guardado en el keyring");
