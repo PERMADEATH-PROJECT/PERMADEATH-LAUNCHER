@@ -1,6 +1,7 @@
 use sqlx::{Error, MySqlPool};
 use chrono::Utc;
 use log::{info, error};
+use serde::Serialize;
 
 /// Represents a row of the 'users' table
 /// `sqlx::FromRow` allow automatic mapping
@@ -14,6 +15,14 @@ pub struct User {
 /// Main SQL Manager
 pub struct DbManager {
     pool: MySqlPool,
+}
+
+#[derive(Debug, Serialize)]
+pub struct UserData {
+    pub status: bool,
+    pub survived_days: i32,
+    pub last_login: String,
+    pub server_role: String,
 }
 
 impl DbManager {
@@ -105,5 +114,42 @@ impl DbManager {
 
         info!("Se afectaron {} filas al actualizar la conexión del usuario {}.", result.rows_affected(), user_id);
         Ok(result.rows_affected())
+    }
+
+    pub async fn load_user_data(&self, username: &str) -> Result<UserData, Error> {
+        info!("Cargando datos del usuario: '{}'", username);
+
+        let result = sqlx::query!(
+            r#"
+            SELECT
+                u.id,
+                a.player_status,
+                a.days_survived,
+                a.last_connection
+            FROM users u
+            INNER JOIN account_status a ON u.id = a.user_id
+            WHERE u.minecraft_username = ?
+            "#,
+            username
+        )
+            .fetch_optional(&self.pool)
+            .await?;
+
+        match result {
+            Some(row) => {
+                let last_login = row.last_connection
+                    .map(|dt| dt.format("%Y-%m-%d %H:%M:%S").to_string())
+                    .unwrap_or_else(|| "Nunca".to_string());
+
+                Ok(UserData {
+                    status: row.player_status.unwrap_or(0) != 0,
+                    survived_days: row.days_survived.unwrap_or(0),
+                    last_login,
+                    server_role: "Jugador".to_string(),
+                })
+
+            }
+            None => Err(Error::RowNotFound),
+        }
     }
 }

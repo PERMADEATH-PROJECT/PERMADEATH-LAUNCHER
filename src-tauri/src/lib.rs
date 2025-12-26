@@ -277,6 +277,16 @@ async fn logout(pool: tauri::State<'_, Arc<sqlx::MySqlPool>>) -> Result<(), Stri
     }
 }
 
+#[tauri::command]
+async fn load_user_data(
+    username: String,
+    db: tauri::State<'_, DbManager>
+) -> Result<db_manager::UserData, String> {
+    db.load_user_data(&username)
+        .await
+        .map_err(|e| format!("Error cargando datos del usuario: {}", e))
+}
+
 /**
  * Keyring is generating and storing the session tokens securely in the Database but not in the system keyring.
  * This is done because is failing XD. Have to re-check later.
@@ -407,7 +417,8 @@ pub async fn run() {
             login_user,
             register_user,
             check_session,
-            logout
+            logout,
+            load_user_data
         ])
             .run(tauri::generate_context!())
             .expect("error while running tauri application");

@@ -34,7 +34,7 @@ impl SessionManager {
             .map_err(|e| format!("Error guardando sesión en DB: {}", e))?;
 
         // Save token in system keyring
-        self.save_token_to_keyring(&token)?;
+        self.save_token_to_keyring(&token).expect("Error guardando token en keyring");
 
         info!("Sesión creada para usuario ID: {}", user_id);
         Ok(token)
@@ -63,19 +63,20 @@ impl SessionManager {
     }
 
     /// Save the token in the system keyring
-    fn save_token_to_keyring(&self, token: &str) -> Result<(), String> {
+    fn save_token_to_keyring(&self, token: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME)
-            .map_err(|e| format!("Error creando entrada en keyring: {}", e))?;
+            .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
         entry.set_password(token)
-            .map_err(|e| format!("Error guardando token en keyring: {}", e))?;
+            .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
         info!("Token guardado en el keyring del sistema");
         Ok(())
     }
 
+
     /// Retrieves the token from the keyring
-    pub fn get_token_from_keyring() -> Result<Option<String>, String> {
+    pub fn get_token_from_keyring() -> Result<Option<String>, Box<dyn std::error::Error + Send + Sync>> {
         let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME)
-            .map_err(|e| format!("Error accediendo al keyring: {}", e))?;
+            .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
         match entry.get_password() {
             Ok(token) => {
                 info!("Token recuperado del keyring");
@@ -87,6 +88,7 @@ impl SessionManager {
             }
         }
     }
+
 
     /// Delete the session (logout)
     pub async fn delete_session(&self, token: &str) -> Result<(), String> {

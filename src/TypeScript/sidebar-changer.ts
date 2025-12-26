@@ -27,6 +27,7 @@ import {game_options, options} from './main.ts';
 import {invoke} from "@tauri-apps/api/core";
 import {JavaVersions} from "./enums/java-versions.ts";
 import {message} from "@tauri-apps/plugin-dialog";
+import {loadUserData} from "./data/load-user-data.ts";
 
 const icons = {
     Skull,
@@ -476,19 +477,19 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
             <div class="account-status-list">
               <div class="account-status-item">
                 <span>Estado del Jugador</span>
-                <span>--</span>
+                <span id="player_status">--</span>
               </div>
               <div class="account-status-item">
                 <span>Días Sobrevividos</span>
-                <span>--</span>
+                <span id="survived_days">--</span>
               </div>
               <div class="account-status-item">
                 <span>Última Conexión</span>
-                <span>Nunca</span>
+                <span id="last_connection">Nunca</span>
               </div>
               <div class="account-status-item">
                 <span>Rol en el Servidor</span>
-                <span>--</span>
+                <span id="server_role">--</span>
               </div>
             </div>
             <div class="account-info account-info--yellow">
@@ -715,6 +716,27 @@ async function handleFormSubmissions(e: SubmitEvent): Promise<void> {
 
             if (successMessage) {
                 await message('Login Successful', {title: 'LogIn Successful', kind: 'info'});
+
+                // Change Account Status to Display User Info
+                const userData = await loadUserData(username)
+                const userStatus = document.getElementById("player_status");
+                const survivedDays = document.getElementById("survived_days");
+                const lastConnection = document.getElementById("last_connection");
+                const serverRole = document.getElementById("server_role");
+                const statusTitle = document.querySelector(".account-status-title") as HTMLElement;
+                const statusDesc = document.querySelector(".account-status-desc") as HTMLElement;
+                const statusState = document.querySelector(".account-status-state") as HTMLElement;
+
+                if (userData && userStatus && survivedDays && lastConnection && serverRole && statusTitle && statusDesc && statusState) {
+                    userStatus.textContent = userData.status ? "Vivo" : "Muerto";
+                    survivedDays.textContent = userData.survived_days.toString();
+                    lastConnection.textContent = userData.last_login;
+                    serverRole.textContent = userData.server_role;
+
+                    statusTitle.textContent = `Conectado como ${username}`;
+                    statusDesc.textContent = "¡Bienvenido de nuevo al desafío!";
+                    statusState.textContent = "Conectado";
+                }
                 return;
             }
             await message('Login Failed', {title: 'LogIn Failed', kind: 'error'});
