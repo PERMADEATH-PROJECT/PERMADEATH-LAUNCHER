@@ -255,6 +255,122 @@
     margin-top: 2px;
 }
 
+/* Asegura que el panel izquierdo ocupe toda la altura disponible para centrar el contenido */
+.account-section--left {
+    display: flex;
+    flex-direction: column;
+    /* Asegura que el contenido se expanda si es necesario */
+    min-height: 400px;
+}
+
+#login-view {
+    /* Asegura que el formulario ocupe el espacio cuando es visible */
+    flex: 1;
+}
+
+.profile-card {
+    flex: 1; /* Ocupa todo el espacio vertical disponible en el panel */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    /* Un fondo sutil para diferenciarlo, opcional */
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.profile-card__avatar {
+    width: 100px;
+    height: 100px;
+    background: rgba(59, 130, 246, 0.1); /* Azul sutil */
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.profile-card__avatar i {
+    width: 50px;
+    height: 50px;
+    color: #60a5fa; /* Azul claro */
+}
+
+.profile-card__content {
+    margin-bottom: 2rem;
+}
+
+.profile-card__welcome {
+    display: block;
+    font-size: 0.9rem;
+    color: #9ca3af; /* Gris */
+    margin-bottom: 0.25rem;
+}
+
+.profile-card__username {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.025em;
+}
+
+.profile-card__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    background: rgba(74, 222, 128, 0.1); /* Fondo verde muy sutil */
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    color: #4ade80; /* Verde claro */
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.profile-card__actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Modificación al botón rojo para que sea un "outline" (borde) en lugar de sólido */
+.account-btn--outline.account-btn--red {
+    background-color: transparent;
+    border: 2px solid rgba(239, 68, 68, 0.5); /* Borde rojo */
+    color: #ef4444;
+    transition: all 0.2s ease;
+    width: auto; /* Que no ocupe todo el ancho */
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.account-btn--outline.account-btn--red:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+}
+
+.profile-card__disclaimer {
+    font-size: 0.8rem;
+    color: #6b7280; /* Gris oscuro */
+    margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
 .dashboard-account-wrapper {
