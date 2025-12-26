@@ -28,6 +28,7 @@ import {invoke} from "@tauri-apps/api/core";
 import {JavaVersions} from "./enums/java-versions.ts";
 import {message} from "@tauri-apps/plugin-dialog";
 import {loadUserData} from "./data/load-user-data.ts";
+import { setUser, getUser, UserData } from "./state/user-store.ts";
 
 const icons = {
     Skull,
@@ -70,7 +71,6 @@ const playDashboard = `<div class="dashboard" id="dashboard">
         </span>
       </div>
       <div class="dashboard__content">
-        <!-- Panel principal: Estado General -->
         <section class="panel panel--main">
           <div class="panel__title">
             <i data-lucide="Skull"></i>
@@ -107,9 +107,7 @@ const playDashboard = `<div class="dashboard" id="dashboard">
             INICIAR PERMADEATHSMP
           </button>
         </section>
-        <!-- Paneles laterales -->
         <div class="dashboard__sidepanels">
-          <!-- Jugadores Online -->
           <section class="panel panel--side panel--online">
             <div class="panel__side-title">
               <i data-lucide="Users"></i>
@@ -138,7 +136,6 @@ const playDashboard = `<div class="dashboard" id="dashboard">
               </div>
             </div>
           </section>
-          <!-- Próximo Cambio -->
           <section class="panel panel--side panel--event">
             <div class="panel__side-title">
               <i data-lucide="Clock"></i>
@@ -162,7 +159,6 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
             Configuración del Launcher
         </h1>
         <form class="config-grid">
-            <!-- General -->
             <section class="config-section">
                 <div class="config-section__header">
                     <i data-lucide="Settings"></i>
@@ -189,7 +185,6 @@ const configDashboard = `<div class="dashboard-config-wrapper" id="dashboard">
                     </label>
                 </div>
             </section>
-            <!-- Juego -->
             <section class="config-section">
                 <div class="config-section__header config-section__header--yellow">
                     <i data-lucide="gamepad-2"></i>
@@ -235,7 +230,6 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
             </span>
             </div>
             <form class="vm-grid">
-                <!-- Memoria -->
                 <section class="vm-section">
                     <div class="vm-section__header">
                         <i data-lucide="memory-stick"></i>
@@ -257,7 +251,6 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                         </div>
                     </div>
                 </section>
-                <!-- Rendimiento -->
                 <section class="vm-section">
                     <div class="vm-section__header vm-section__header--green">
                         <i data-lucide="Gauge"></i>
@@ -280,7 +273,6 @@ const vmDashboard = `<div class="dashboard-vm-wrapper" id="dashboard">
                         </label>
                     </div>
                 </section>
-                <!-- JVM Args -->
                 <section class="vm-section vm-section--full">
                     <div class="vm-section__header">
                         <i data-lucide="Zap"></i>
@@ -417,7 +409,6 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
           Gestión de Cuenta
         </h1>
         <div class="account-grid">
-          <!-- Formulario de Inicio de Sesión -->
           <section class="account-section">
             <div class="account-section__header">
               <i data-lucide="User"></i>
@@ -456,7 +447,6 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
               <a id="create_account" class="account-link">Crear Cuenta</a>
             </form>
           </section>
-          <!-- Estado de la Cuenta -->
           <section class="account-section">
             <div class="account-section__header account-section__header--green">
               <i data-lucide="shield-check"></i>
@@ -504,7 +494,6 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
           </section>
         </div>
       </div>
-      <!-- Modal para Crear Cuenta -->
       <div id="create-account-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
@@ -654,7 +643,6 @@ function setupUpdatesListeners(): void {
 }
 
 function setupAccountListeners(): void {
-    // This function now only handles the modal's logic (open/close).
     const createAccountLink = document.getElementById("create_account");
     const modal = document.getElementById("create-account-modal");
     const closeModalBtn = document.getElementById("close-modal-btn");
@@ -673,6 +661,38 @@ function setupAccountListeners(): void {
     modal?.addEventListener('click', (e) => {
         if (e.target === modal) hideModal();
     });
+
+    // Al abrir la pestaña, revisamos si ya tenemos datos en el store global.
+    const storedUser = getUser();
+    if (storedUser) {
+        // Si existen, rellenamos la UI inmediatamente sin hacer login de nuevo
+        renderUserData(storedUser);
+    }
+}
+
+// Nueva función Helper para pintar los datos
+function renderUserData(userData: UserData) {
+    const userStatus = document.getElementById("player_status");
+    const survivedDays = document.getElementById("survived_days");
+    const lastConnection = document.getElementById("last_connection");
+    const serverRole = document.getElementById("server_role");
+    const statusTitle = document.querySelector(".account-status-title") as HTMLElement;
+    const statusDesc = document.querySelector(".account-status-desc") as HTMLElement;
+    const statusState = document.querySelector(".account-status-state") as HTMLElement;
+    const loginForm = document.getElementById("login-form") as HTMLFormElement;
+
+    if (userStatus && survivedDays && lastConnection && serverRole && statusTitle && statusDesc && statusState) {
+        userStatus.textContent = userData.status ? "Vivo" : "Muerto";
+        survivedDays.textContent = userData.survived_days.toString();
+        lastConnection.textContent = userData.last_login;
+        serverRole.textContent = userData.server_role;
+
+        statusTitle.textContent = `Conectado como ${userData.username}`;
+        statusDesc.textContent = "¡Bienvenido de nuevo al desafío!";
+        statusState.textContent = "Conectado";
+
+        if(loginForm) loginForm.style.display = 'none';
+    }
 }
 
 // --- Central Form Handler (using event delegation) ---
@@ -718,24 +738,15 @@ async function handleFormSubmissions(e: SubmitEvent): Promise<void> {
                 await message('Login Successful', {title: 'LogIn Successful', kind: 'info'});
 
                 // Change Account Status to Display User Info
-                const userData = await loadUserData(username)
-                const userStatus = document.getElementById("player_status");
-                const survivedDays = document.getElementById("survived_days");
-                const lastConnection = document.getElementById("last_connection");
-                const serverRole = document.getElementById("server_role");
-                const statusTitle = document.querySelector(".account-status-title") as HTMLElement;
-                const statusDesc = document.querySelector(".account-status-desc") as HTMLElement;
-                const statusState = document.querySelector(".account-status-state") as HTMLElement;
+                const userData = await loadUserData(username);
 
-                if (userData && userStatus && survivedDays && lastConnection && serverRole && statusTitle && statusDesc && statusState) {
-                    userStatus.textContent = userData.status ? "Vivo" : "Muerto";
-                    survivedDays.textContent = userData.survived_days.toString();
-                    lastConnection.textContent = userData.last_login;
-                    serverRole.textContent = userData.server_role;
+                if (userData) {
+                    // GUARDAR EN STORE GLOBAL
+                    const fullUserData: UserData = { ...userData, username };
+                    setUser(fullUserData);
 
-                    statusTitle.textContent = `Conectado como ${username}`;
-                    statusDesc.textContent = "¡Bienvenido de nuevo al desafío!";
-                    statusState.textContent = "Conectado";
+                    // PINTAR UI
+                    renderUserData(fullUserData);
                 }
                 return;
             }
