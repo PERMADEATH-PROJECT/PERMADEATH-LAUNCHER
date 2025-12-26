@@ -1,6 +1,6 @@
 // src-tauri/src/session_manager.rs
 use keyring::Entry;
-use log::info;
+use log::{info, error};
 use sqlx::MySqlPool;
 use chrono::{Utc, Duration};
 use uuid::Uuid;
@@ -64,26 +64,31 @@ impl SessionManager {
 
     /// Save the token in the system keyring
     fn save_token_to_keyring(&self, token: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME)
+        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME);
+
+        entry.unwrap().set_password(token)
             .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
-        entry.set_password(token)
-            .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
-        info!("Token guardado en el keyring del sistema");
+
+        info!("Token guardado en el keyring del sistema (v2)");
         Ok(())
     }
 
 
     /// Retrieves the token from the keyring
     pub fn get_token_from_keyring() -> Result<Option<String>, Box<dyn std::error::Error + Send + Sync>> {
-        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME)
-            .map_err(|e| Box::new(e) as Box<dyn std::error::Error + Send + Sync>)?;
-        match entry.get_password() {
+        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME);
+
+        match entry?.get_password() {
             Ok(token) => {
                 info!("Token recuperado del keyring");
                 Ok(Some(token))
             }
-            Err(_) => {
+            Err(keyring::Error::NoEntry) => {
                 info!("No se encontró token en el keyring");
+                Ok(None)
+            }
+            Err(e) => {
+                error!("Error leyendo token del keyring: {:?}", e);
                 Ok(None)
             }
         }
@@ -97,9 +102,12 @@ impl SessionManager {
             .await
             .map_err(|e| format!("Error eliminando sesión de DB: {}", e))?;
 
-        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME)
-            .map_err(|e| format!("Error accediendo al keyring: {}", e))?;
-        let _ = entry.delete_credential(); // Ignore error if not found
+        let entry = Entry::new(SERVICE_NAME, TOKEN_USERNAME);
+
+        // En v2 el método es delete_password, no delete_credential
+        if let Err(e) = entry.unwrap().delete_password() {
+            error!("Error eliminando credencial del keyring: {}", e);
+        }
 
         info!("Sesión eliminada");
         Ok(())
