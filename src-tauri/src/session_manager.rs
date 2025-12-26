@@ -41,9 +41,14 @@ impl SessionManager {
     }
 
     /// Validate a session token
-    pub async fn validate_token(&self, token: &str) -> Result<Option<i32>, String> {
+    pub async fn validate_token(&self, token: &str) -> Result<Option<(i32, String)>, String> {
         let result = sqlx::query!(
-            "SELECT user_id, expires_at FROM sessions WHERE session_token = ? AND expires_at > NOW()",
+            r#"
+            SELECT s.user_id, u.minecraft_username
+            FROM sessions s
+            JOIN users u ON s.user_id = u.id
+            WHERE s.session_token = ? AND s.expires_at > NOW()
+            "#,
             token
         )
             .fetch_optional(&self.pool)
@@ -52,8 +57,9 @@ impl SessionManager {
 
         match result {
             Some(row) => {
-                info!("Token válido para usuario ID: {}", row.user_id);
-                Ok(Some(row.user_id))
+                info!("Token válido para: {}", row.minecraft_username);
+                // Return user_id and minecraft_username
+                Ok(Some((row.user_id, row.minecraft_username)))
             }
             None => {
                 info!("Token inválido o expirado");
