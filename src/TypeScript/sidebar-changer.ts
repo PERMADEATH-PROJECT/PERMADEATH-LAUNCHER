@@ -409,44 +409,58 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
           Gestión de Cuenta
         </h1>
         <div class="account-grid">
-          <section class="account-section">
+          <section class="account-section account-section--left">
             <div class="account-section__header">
               <i data-lucide="User"></i>
-              Iniciar Sesión
+              Cuenta
             </div>
-            <div class="account-warning account-warning--red">
-              <i data-lucide="triangle-alert"></i>
-              Solo se permite una cuenta por jugador en PERMADEATHSMP. La muerte
-              es permanente e irreversible.
+            
+            <div id="login-view">
+                <div class="account-warning account-warning--red">
+                  <i data-lucide="triangle-alert"></i>
+                  Solo se permite una cuenta por jugador.
+                </div>
+                <form id="login-form" class="account-form">
+                  <label class="account-label">
+                    Usuario de Minecraft
+                    <input type="text" class="account-input" placeholder="TuNombreDeUsuario" id="username" required />
+                  </label>
+                  <label class="account-label">
+                    Contraseña
+                    <input type="password" class="account-input" placeholder="********" id="password" required />
+                  </label>
+                  <button class="account-btn account-btn--blue" type="submit">
+                    <i data-lucide="log-in"></i>
+                    Iniciar Sesión
+                  </button>
+                  <a id="create_account" class="account-link">Crear Cuenta</a>
+                </form>
             </div>
-            <form id="login-form" class="account-form">
-              <label class="account-label">
-                Usuario de Minecraft
-                <input
-                  type="text"
-                  class="account-input"
-                  placeholder="TuNombreDeUsuario"
-                  id="username"
-                  required
-                />
-              </label>
-              <label class="account-label">
-                Contraseña
-                <input
-                  type="password"
-                  class="account-input"
-                  placeholder="********"
-                  id="password"
-                  required
-                />
-              </label>
-              <button class="account-btn account-btn--blue" type="submit">
-                <i data-lucide="log-in"></i>
-                Iniciar Sesión
-              </button>
-              <a id="create_account" class="account-link">Crear Cuenta</a>
-            </form>
+
+            <div id="logged-in-view" class="profile-card" style="display: none;">
+                <div class="profile-card__avatar">
+                    <i data-lucide="user-round"></i>
+                </div>
+                <div class="profile-card__content">
+                    <span class="profile-card__welcome">¡Hola de nuevo!</span>
+                    <h2 id="welcome-username" class="profile-card__username">Usuario</h2>
+                    <div class="profile-card__badge">
+                        <span class="status-dot"></span>
+                        Sesión Activa y Segura
+                    </div>
+                </div>
+                <div class="profile-card__actions">
+                    <button id="logout-btn" class="account-btn account-btn--red account-btn--outline">
+                        <i data-lucide="log-out"></i>
+                        Cerrar Sesión
+                    </button>
+                    <p class="profile-card__disclaimer">
+                        La muerte es permanente. Juega con cuidado.
+                    </p>
+                </div>
+            </div>
           </section>
+
           <section class="account-section">
             <div class="account-section__header account-section__header--green">
               <i data-lucide="shield-check"></i>
@@ -458,9 +472,7 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
               </div>
               <div class="account-status-info">
                 <span class="account-status-title">No conectado</span>
-                <span class="account-status-desc"
-                  >Inicia sesión para acceder al servidor</span
-                >
+                <span class="account-status-desc">Inicia sesión para ver tus estadísticas</span>
               </div>
               <span class="account-status-state">Desconectado</span>
             </div>
@@ -482,48 +494,24 @@ const accountDashboard = `<div class="dashboard-account-wrapper" id="dashboard">
                 <span id="server_role">--</span>
               </div>
             </div>
-            <div class="account-info account-info--yellow">
-              <div>
-                <span class="account-info-title">Información Importante</span>
-                <span class="account-info-desc">
-                  Una vez que inicies sesión y entras al servidor, no podrás
-                  crear otra cuenta. La muerte resulta en un baneo permanente.
-                </span>
-              </div>
-            </div>
           </section>
         </div>
       </div>
       <div id="create-account-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
           <div class="modal-header">
-            <h2>Crear Cuenta de PERMADEATHSMP</h2>
+            <h2>Crear Cuenta</h2>
             <button id="close-modal-btn" class="modal-close-btn">&times;</button>
           </div>
-                  <form id="create-account-form" class="modal-body">
-            <p class="modal-warning">
-              Recuerda: solo se permite una cuenta. La muerte es final y el baneo, permanente.
-            </p>
-            <label class="account-label">
-              Usuario de Minecraft
-              <input type="text" id="new-username" class="account-input" placeholder="TuNombreDeUsuario" required />
-            </label>
-            <label class="account-label">
-              Contraseña
-              <input type="password" id="new-password" class="account-input" placeholder="********" required />
-            </label>
-            <label class="account-label">
-              Confirmar Contraseña
-              <input type="password" id="confirm-password" class="account-input" placeholder="********" required />
-            </label>
-            <label class="account-label">
-              Código de Invitación
-              <input type="text" id="invite-code" class="account-input" placeholder="PDSMP-XXXX-XXXX" required />
-            </label>
-            <div class="modal-footer">
-              <button type="button" id="cancel-create-account" class="account-btn account-btn--secondary">Cancelar</button>
-              <button type="submit" class="account-btn account-btn--blue">Crear Cuenta</button>
-            </div>
+          <form id="create-account-form" class="modal-body">
+             <label class="account-label">Usuario <input type="text" id="new-username" class="account-input" required /></label>
+             <label class="account-label">Contraseña <input type="password" id="new-password" class="account-input" required /></label>
+             <label class="account-label">Confirmar <input type="password" id="confirm-password" class="account-input" required /></label>
+             <label class="account-label">Código <input type="text" id="invite-code" class="account-input" required /></label>
+             <div class="modal-footer">
+               <button type="button" id="cancel-create-account" class="account-btn account-btn--secondary">Cancelar</button>
+               <button type="submit" class="account-btn account-btn--blue">Crear</button>
+             </div>
           </form>
         </div>
       </div>
@@ -643,55 +631,103 @@ function setupUpdatesListeners(): void {
 }
 
 function setupAccountListeners(): void {
+    // Lógica del modal (igual que tenías)
     const createAccountLink = document.getElementById("create_account");
     const modal = document.getElementById("create-account-modal");
     const closeModalBtn = document.getElementById("close-modal-btn");
     const cancelBtn = document.getElementById("cancel-create-account");
-
     const showModal = () => modal && (modal.style.display = 'flex');
     const hideModal = () => modal && (modal.style.display = 'none');
-
-    createAccountLink?.addEventListener('click', (e) => {
-        e.preventDefault();
-        showModal();
-    });
-
+    createAccountLink?.addEventListener('click', (e) => { e.preventDefault(); showModal(); });
     closeModalBtn?.addEventListener('click', hideModal);
     cancelBtn?.addEventListener('click', hideModal);
-    modal?.addEventListener('click', (e) => {
-        if (e.target === modal) hideModal();
+    modal?.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
+
+    // Logout Logic ---
+    document.getElementById("logout-btn")?.addEventListener("click", async () => {
+        try {
+            await invoke('logout');
+            setUser(null); // Clean Store
+            resetAccountUI(); // Reset UI
+            await message('Has cerrado sesión correctamente.', { title: 'Sesión Cerrada', kind: 'info' });
+        } catch (e) {
+            console.error(e);
+        }
     });
 
-    // Al abrir la pestaña, revisamos si ya tenemos datos en el store global.
+    // Check if user data exists in the store
     const storedUser = getUser();
     if (storedUser) {
-        // Si existen, rellenamos la UI inmediatamente sin hacer login de nuevo
         renderUserData(storedUser);
+    } else {
+        resetAccountUI();
     }
 }
 
-// Nueva función Helper para pintar los datos
+// New Helper function to render user data
 function renderUserData(userData: UserData) {
+    const loginView = document.getElementById("login-view");
+    const loggedInView = document.getElementById("logged-in-view");
+
+    const welcomeUsernameMsg = document.getElementById("welcome-username");
+
+    if (loginView) {
+        loginView.style.display = 'none';
+    }
+
+    if (loggedInView) {
+        loggedInView.style.display = 'flex';
+
+        if (welcomeUsernameMsg) {
+            welcomeUsernameMsg.textContent = userData.username;
+        }
+    }
+
+    const userStatus = document.getElementById("player_status");
+    const survivedDays = document.getElementById("survived_days");
+    const lastConnection = document.getElementById("last_connection");
+    const serverRole = document.getElementById("server_role");
+
+    const statusTitle = document.querySelector(".account-status-title") as HTMLElement;
+    const statusState = document.querySelector(".account-status-state") as HTMLElement;
+
+    if (userStatus) userStatus.textContent = userData.status ? "Vivo" : "Muerto";
+    if (survivedDays) survivedDays.textContent = userData.survived_days.toString();
+    if (lastConnection) lastConnection.textContent = userData.last_login;
+    if (serverRole) serverRole.textContent = userData.server_role;
+
+    if (statusTitle) statusTitle.textContent = `Conectado como ${userData.username}`;
+    if (statusState) {
+        statusState.textContent = "Conectado";
+        statusState.style.color = "#4ade80";
+    }
+}
+
+function resetAccountUI() {
+    const loginView = document.getElementById("login-view");
+    const loggedInView = document.getElementById("logged-in-view");
+
+    // Change view: Show form, hide logout button
+    if (loginView) loginView.style.display = 'block';
+    if (loggedInView) loggedInView.style.display = 'none';
+
+    // Clean data
     const userStatus = document.getElementById("player_status");
     const survivedDays = document.getElementById("survived_days");
     const lastConnection = document.getElementById("last_connection");
     const serverRole = document.getElementById("server_role");
     const statusTitle = document.querySelector(".account-status-title") as HTMLElement;
-    const statusDesc = document.querySelector(".account-status-desc") as HTMLElement;
     const statusState = document.querySelector(".account-status-state") as HTMLElement;
-    const loginForm = document.getElementById("login-form") as HTMLFormElement;
 
-    if (userStatus && survivedDays && lastConnection && serverRole && statusTitle && statusDesc && statusState) {
-        userStatus.textContent = userData.status ? "Vivo" : "Muerto";
-        survivedDays.textContent = userData.survived_days.toString();
-        lastConnection.textContent = userData.last_login;
-        serverRole.textContent = userData.server_role;
+    if (userStatus) userStatus.textContent = "--";
+    if (survivedDays) survivedDays.textContent = "--";
+    if (lastConnection) lastConnection.textContent = "Nunca";
+    if (serverRole) serverRole.textContent = "--";
 
-        statusTitle.textContent = `Conectado como ${userData.username}`;
-        statusDesc.textContent = "¡Bienvenido de nuevo al desafío!";
-        statusState.textContent = "Conectado";
-
-        if(loginForm) loginForm.style.display = 'none';
+    if (statusTitle) statusTitle.textContent = "No conectado";
+    if (statusState) {
+        statusState.textContent = "Desconectado";
+        statusState.style.color = "#9ca3af"; // Gray
     }
 }
 
