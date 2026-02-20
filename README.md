@@ -9,7 +9,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Modern, responsive interface:** All main panels implemented in the frontend.
 - **Full integration with the Minecraft ecosystem:** Includes Microsoft authentication, mod support, backups, and version control.
@@ -17,7 +17,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 📋 Project Status
+## Project Status
 
 ### Front-end (Fully completed)
 - [x] "Play" Panel
@@ -74,7 +74,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 📦 Project Structure
+## Project Structure
 
 ```
 ├── src-tauri/            # Rust backend (Tauri commands, integration logic)
@@ -86,7 +86,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 🛠️ Requirements
+## Requirements
 
 - [Rust](https://www.rust-lang.org/tools/install) (stable)
 - [Node.js](https://nodejs.org/) (for frontend and Tauri)
@@ -94,7 +94,7 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 📚 Installation and Usage
+## Installation and Usage
 
 1. Install dependencies:
    ```bash
@@ -114,13 +114,13 @@ This project is a modern, highly customizable launcher for SMP servers with perm
 
 ---
 
-## 💬 Community & Contribution
+## Community & Contribution
 
 All suggestions, reports, and PRs are welcome!  
 Check the [issues](https://github.com/ponchisao326/PERMADEATH-LAUNCHER/issues) for pending tasks and bugs.
 
 ---
 
-## 📝 License
+## License
 
 MIT © ponchisao326
