@@ -1,4 +1,7 @@
-# PERMADEATH LAUNCHER
+# PERMADEATH LAUNCHER [DEPRECATED]
+
+> **This repository is no longer maintained.**
+> Development has moved to [PERMADEATH-LAUNCHER-REWRITE](https://github.com/ponchisao326/PERMADEATH-LAUNCHER-REWRITE), which replaces this project with an Angular-based frontend. No further updates, bug fixes, or PRs will be accepted here.
 
 **A launcher for Minecraft PERMADEATH servers, built with [Rust](https://www.rust-lang.org/) and [Tauri 2.0](https://tauri.app/).**
 
